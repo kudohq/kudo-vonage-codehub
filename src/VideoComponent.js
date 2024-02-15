@@ -1,0 +1,200 @@
+import React, { useState, useEffect, useRef } from "react";
+import MicIcon from "@mui/icons-material/Mic";
+import MicOffIcon from "@mui/icons-material/MicOff";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Tooltip, Button } from "@mui/material";
+import logo from "./Group.png";
+import {
+  toggleAudio,
+  toggleVideo,
+  toggleAudioSubscribtion,
+  toggleVideoSubscribtion,
+  initializeSession,
+  stopStreaming,
+} from "./ExternalApiIntegration/VideoApiIntegration";
+import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
+import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
+import "./VideoChatComponent.scss";
+
+function VideoComponent() {
+  const [isInterviewStarted, setIsInterviewStarted] = useState(false);
+  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isAudioSubscribed, setIsAudioSubscribed] = useState(true);
+  const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
+  const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
+  const [translatedBlob, setTranslatedBlob] = useState(null);
+  const [chunk, setChunk] = useState(null);
+  const [value, setValue] = useState("ENGLISH");
+  const recorderRef = useRef(null);
+
+  console.log({ chunk });
+  useEffect(() => {
+    if (isInterviewStarted) {
+      initializeSession(setChunk, setTranslatedBlob);
+    } else {
+      stopStreaming();
+
+      if (recorderRef.current) {
+        recorderRef.current.stopRecording();
+      }
+    }
+  }, [isInterviewStarted]);
+
+  const onToggleAudio = (action) => {
+    setIsAudioEnabled(action);
+    toggleAudio(action);
+  };
+  const onToggleVideo = (action) => {
+    setIsVideoEnabled(action);
+    toggleVideo(action);
+  };
+  const onToggleAudioSubscribtion = (action) => {
+    setIsAudioSubscribed(action);
+    toggleAudioSubscribtion(action);
+  };
+  const onToggleVideoSubscribtion = (action) => {
+    setIsVideoSubscribed(action);
+    toggleVideoSubscribtion(action);
+  };
+
+  const renderToolbar = () => {
+    return (
+      <>
+        {isInterviewStarted && (
+          <div className="video-toolbar">
+            <LanguageSelector setValue={setValue} />
+            <div className="video-tools">
+              {isAudioEnabled ? (
+                <Tooltip title="mic on">
+                  <MicIcon
+                    onClick={() => onToggleAudio(false)}
+                    className="on-icon"
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title="mic off">
+                  <MicOffIcon
+                    onClick={() => onToggleAudio(true)}
+                    className="off-icon"
+                  />
+                </Tooltip>
+              )}
+              {isVideoEnabled ? (
+                <Tooltip title="camera on">
+                  <VideocamIcon
+                    onClick={() => onToggleVideo(false)}
+                    className="on-icon"
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title="camera off">
+                  <VideocamOffIcon
+                    onClick={() => onToggleVideo(true)}
+                    className="off-icon"
+                  />
+                </Tooltip>
+              )}
+
+              {isStreamSubscribed && (
+                <>
+                  {isAudioSubscribed ? (
+                    <Tooltip title="sound on">
+                      <VolumeUpIcon
+                        onClick={() => onToggleAudioSubscribtion(false)}
+                        className="on-icon"
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="sound off">
+                      <VolumeOffIcon
+                        onClick={() => onToggleAudioSubscribtion(true)}
+                        className="off-icon"
+                      />
+                    </Tooltip>
+                  )}
+                  {isVideoSubscribed ? (
+                    <Tooltip title="screen on">
+                      <VisibilityIcon
+                        onClick={() => onToggleVideoSubscribtion(false)}
+                        className="on-icon"
+                      />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip title="screen of">
+                      <VisibilityOffIcon
+                        onClick={() => onToggleVideoSubscribtion(true)}
+                        className="off-icon"
+                      />
+                    </Tooltip>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <>
+      <div className="App">
+        <div className="App-header">
+          <img src={logo} className="App-logo" alt="logo" />
+          <h1>Vonage video Api</h1>
+        </div>
+      </div>
+      <div className="actions-btns">
+        <Button
+          onClick={() => setIsInterviewStarted(true)}
+          disabled={isInterviewStarted}
+          color="primary"
+          variant="contained"
+        >
+          Start chat
+        </Button>
+        <Button
+          onClick={() => setIsInterviewStarted(false)}
+          disabled={!isInterviewStarted}
+          color="secondary"
+          variant="contained"
+        >
+          Finish chat
+        </Button>
+      </div>
+      <div className="video-container">
+        <div
+          id="subscriber"
+          className={`${
+            isStreamSubscribed ? "main-video" : "additional-video"
+          }`}
+        >
+          {isStreamSubscribed && renderToolbar()}
+        </div>
+        <div
+          id="publisher"
+          className={`${
+            isStreamSubscribed ? "additional-video" : "main-video"
+          }`}
+        >
+          {!isStreamSubscribed && renderToolbar()}
+        </div>
+      </div>
+
+      {chunk ? (
+        <WebsocketConnection
+          dataBlobUrl={chunk}
+          translatedBlob={translatedBlob}
+        />
+      ) : null}
+    </>
+  );
+}
+
+export default VideoComponent;
