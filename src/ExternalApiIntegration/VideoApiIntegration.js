@@ -1,10 +1,12 @@
 import OT from "@opentok/client";
+
 import { API_KEY, SESSION_ID, TOKEN } from "../config";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
+import funkloop from "../assets/fastCount.mp3"
 let apiKey = API_KEY;
 let sessionId = SESSION_ID;
 let token = TOKEN;
-let session, subscriber, publisher;
+let session, subscriber, publisher, panner;
 
 function handleError(error) {
   if (error) {
@@ -13,34 +15,29 @@ function handleError(error) {
 }
 
 export function initializeSession(setChunk, recorderRef) {
+  if (session && session.isConnected()) {
+    session.disconnect();
+  }
   session = OT.initSession(apiKey, sessionId);
-   
-  publisher = OT.initPublisher(
-      "publisher",
-      {
-        insertMode: "append",
-        style: { buttonDisplayMode: "off" },
-        width: "100%",
-        height: "100%",
-        insertDefaultUI: true,
-        publishAudio: true,
-      },
-      handleError
-    );
+
   // Connect to the session
   session.connect(token, function (error) {
-    // Create a publisher
-
     // If the connection is successful, publish to the session
     if (error) {
       handleError(error);
     } else {
-      session.publish(publisher, handleError);
-
-      navigator.mediaDevices
+    }
+  });
+  // Subscribing to stream
+  session.on("streamCreated", function (event) {
+    const subscriberOptions = {
+      insertMode: 'append',
+      width: '100%',
+      height: '100%',
+    };
+    navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then(function (stream) {
-          // console.log(stream, "streamsss");
 
           recorderRef.current = new RecordRTC(stream, {
             type: "audio",
@@ -48,7 +45,6 @@ export function initializeSession(setChunk, recorderRef) {
             recorderType: StereoAudioRecorder,
             timeSlice: 1000,
             ondataavailable: function (data) {
-              // console.log(data, "chunk data");
               setChunk(data);
             },
           });
@@ -58,29 +54,12 @@ export function initializeSession(setChunk, recorderRef) {
         .catch(function (error) {
           console.error("Error accessing microphone:", error);
         });
-    }
-  });
-
-  // Subscribing to stream
-  session.on("streamCreated", function (event) {
-    console.log("stream created", event);
-    subscriber = session.subscribe(
-      event.stream,
-      "subscriber",
-      {
-        insertMode: "append",
-        style: { buttonDisplayMode: "off" },
-        width: "100%",
-        height: "100%",
-        publishAudio: true,
-      },
-      handleError
-    );
-
+    
+    session.subscribe(event.stream, 'subscriber', subscriberOptions, handleError);
   });
 
   // Do some action on destroying the stream
-  session.on("streamDestroyed", function (event) {
+  session.on("sessionDisconnected", function (event) {
     console.log("event in destroyed", event);
   });
 }
@@ -101,4 +80,95 @@ export function toggleAudioSubscribtion(state) {
 }
 export function toggleVideoSubscribtion(state) {
   subscriber.subscribeToVideo(state);
+}
+
+function getAudioBuffer(url, audioContext) {
+  return fetch(url)
+    .then((res) => {
+
+      return res.arrayBuffer();
+    }
+    )
+    .then(
+      (audioData) =>
+        new Promise((resolve, reject) => {
+          audioContext.decodeAudioData(audioData, resolve, reject);
+        })
+    );
+}
+
+function createAudioStream(audioBuffer, audioContext) {
+  const startTime = audioContext.currentTime;
+
+  const player = audioContext.createBufferSource();
+  player.buffer = audioBuffer;
+  player.start(startTime);
+  player.loop = true;
+
+  const destination = audioContext.createMediaStreamDestination();
+  panner = audioContext.createStereoPanner();
+  panner.pan.value = 0;
+  panner.connect(destination);
+  player.connect(panner);
+  return {
+    audioStream: destination.stream,
+    stop() {
+      player.disconnect();
+      player.stop();
+    },
+  };
+}
+
+export function publish() {
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+  // Create audio stream from mp3 file and video stream from webcam
+  Promise.all([
+    getAudioBuffer(funkloop, audioContext),
+    OT.getUserMedia({ videoSource: null }),
+  ])
+    .then((results) => {
+      const [audioBuffer, videoStream] = results;
+      const { audioStream, stop } = createAudioStream(
+        audioBuffer,
+        audioContext
+      );
+
+      // initialize the publisher
+      const publisherOptions = {
+        insertMode: "append",
+        width: "100%",
+        height: "100%",
+        videoSource: videoStream.getVideoTracks()[0],
+        // Pass in the generated audio track as our custom audioSource
+        audioSource: audioStream.getAudioTracks()[0],
+        // Enable stereo audio
+        enableStereo: true,
+        // Increasing audio bitrate is recommended for stereo music
+        audioBitrate: 128000,
+      };
+      publisher = OT.initPublisher("publisher", publisherOptions, (error) => {
+        if (error) {
+          handleError(error);
+        } else {
+          // If the connection is successful, publish the publisher to the session
+          session.publish(publisher, (error) => {
+            if (error) {
+              handleError(error);
+              console.log("publisher error", error)
+            }
+          });
+        }
+      });
+
+      publisher.on("destroyed", () => {
+        // When the publisher is destroyed we cleanup
+        stop();
+        audioContext.close();
+      });
+    })
+    .catch((error) => {
+      audioContext.close();
+      throw error;
+    });
 }

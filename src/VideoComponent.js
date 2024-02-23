@@ -16,9 +16,11 @@ import {
   toggleVideoSubscribtion,
   initializeSession,
   stopStreaming,
+  publish,
 } from "./ExternalApiIntegration/VideoApiIntegration";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
+import { CreateLanguageChannel } from "./CreateLanguageChannel"
 import "./VideoChatComponent.scss";
 
 function VideoComponent() {
@@ -30,13 +32,13 @@ function VideoComponent() {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [translatedBlob, setTranslatedBlob] = useState(null);
   const [chunk, setChunk] = useState(null);
-  const [value, setValue] = useState("ENGLISH");
+  const [SelectedLanguage, setSelectedLanguage] = useState("ENGLISH");
   const recorderRef = useRef(null);
 
   console.log({ chunk });
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, setTranslatedBlob);
+      initializeSession(setChunk, recorderRef);
     } else {
       stopStreaming();
 
@@ -68,7 +70,7 @@ function VideoComponent() {
       <>
         {isInterviewStarted && (
           <div className="video-toolbar">
-            <LanguageSelector setValue={setValue} />
+            <LanguageSelector setValue={setSelectedLanguage} />
             <div className="video-tools">
               {isAudioEnabled ? (
                 <Tooltip title="mic on">
@@ -151,6 +153,13 @@ function VideoComponent() {
         </div>
       </div>
       <div className="actions-btns">
+        <Button
+          onClick={publish}
+          color="primary"
+          variant="contained"
+        >
+          Start Publishing
+        </Button>
         <Button
           onClick={() => setIsInterviewStarted(true)}
           disabled={isInterviewStarted}

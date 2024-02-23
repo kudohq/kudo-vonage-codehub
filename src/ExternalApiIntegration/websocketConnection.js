@@ -7,9 +7,8 @@ export const WebsocketConnection = ({ dataBlobUrl }) => {
   const SERVER_URL =
     "wss://external-api-staging.meetkudo.com/api/v1/translate?id=d5c3c200-ce99-4f4c-8f39-abdbf523d8ad";
   const API_TOKEN =
-    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA3ODQ2Mjc5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDc5MzI2NzksImlhdCI6MTcwNzg0NjI3OSwidmVyc2lvbiI6MiwianRpIjoiYjgwNTA0MzMtZjhjNy00MWM4LTk3M2UtZTMzOTkwYjc3YjAwIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.eXpgAKzmF89etKQbH1-whnHNFUuHrcQDSQTdTDyQuQ8XRqKegPLbjAkgsLpq3X63RMUR7ev6LaMp1NW39FNBwSUgNOZAdbYvFzwa0DinXg65Dsflh6m9Dr8pEBzaFne0mHApLNf6tTZmyTTZcpu5P7Nh9aFMSnuulhD36uG7swRfPQ_6nclivq8AkN3edbUGkkmPcgpkU0YVdaNlC1knXI2BirPFHisz4p20EID4bIFH4nIHB1dJGpg8mtY9YHWM8Sdb49LdVnVIFZEqSaGYM_B7gSr8l5WfNHqzvR-Sy2aCDn53gtlA9x-Zc9UEO22A4UC0TZ4vLAwOFjZbn2TIhA";
-
-  const [binaryData, setBinaryData] = useState("audio/wav;base64,");
+    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA4NjgzOTYzLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDg3NzAzNjMsImlhdCI6MTcwODY4Mzk2MywidmVyc2lvbiI6MiwianRpIjoiODM2YWQxZGUtZTE0Zi00MmE5LWJkY2YtZWMwMmRjYzY3ZGRiIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.kC-mRwg8L6KT3KRoUlWKxRcM-57s9vMXHx7TwfTMC1u8x4vaYOhu1A2ZZ4zkaVfAQRzJivzAYWY5gvmk6FZpbSzk921FiXm5sx5gA_fUAikWm6DdWUPu1OGiCGWHD9NO9DGYl70DM-l-ESyqMQiSygqYMSQcY23qVhiVSZE1qMBzN4_LNcbAWip9smFzjeX7jYxxNc6CaUl2oR-k1q3PyWTdcle9qAZJsIkaUSSRMSzjYT962vzzKyNo55Gkzbk8EWEHWneiJH-pfOpS28nM6wxOmEi5wnFIvTCShEh2aprCcYPDIHxnUjtgjnAZbIqOQ10kEpVKKiQrScpNwAkL2Q"
+      const [binaryData, setBinaryData] = useState("audio/wav;base64,");
 
   // converting the data to valid binary format
   function convertDataURIToBinary(dataURI) {
@@ -40,7 +39,6 @@ export const WebsocketConnection = ({ dataBlobUrl }) => {
     onClose: (e) => {
       var binary = convertDataURIToBinary(binaryData);
       var blob = new Blob([binary], { type: "audio/wav" });
-
       saveAs(blob, "audio-output.ogg");
 
       console.log("closed", e);
@@ -55,15 +53,12 @@ export const WebsocketConnection = ({ dataBlobUrl }) => {
   const convertBlobToArray = useCallback(async () => {
     const arrayBuffer = await dataBlobUrl.arrayBuffer();
 
-    console.log("arrayBuffer", arrayBuffer, "dataBlobUrl", dataBlobUrl);
-
     const dataView = new DataView(arrayBuffer);
     const pcmData = new Float32Array(arrayBuffer.byteLength / 4);
 
     for (let i = 0; i < pcmData.length; i++) {
       pcmData[i] = dataView.getInt16(i * 4, true);
     }
-    console.log("pcmData", pcmData);
     sendMessage(JSON.stringify(pcmData));
   }, [dataBlobUrl, sendMessage]);
 
