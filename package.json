@@ -11,7 +11,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "@vonage/cli": "^1.2.4",
+    "@vonage/cli": "^2.1.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "express-ws": "^5.0.2",
