@@ -52,10 +52,7 @@ function VideoComponent() {
 
   useEffect(() =>{
     if(translatedBuffer){
-      console.log("translatedBuffer inside use effect", index, translatedBuffer);
-      // setTimeout(() => {
-        publish(translatedBuffer[index])
-      // }, 5000)
+      publish(translatedBuffer[index])
       setIndex((prevIndex) => prevIndex + 1);
       console.log("after use effect", index, translatedBuffer);
 
@@ -162,7 +159,7 @@ function VideoComponent() {
     <>
       <div className="App">
         <div className="App-header">
-          <img src="https://spaceheater-dev-assets.s3.us-west-2.amazonaws.com/public/images/a.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAQ52YLVEQDF4NBDHK%2F20240229%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20240229T120350Z&X-Amz-Expires=3600&X-Amz-Signature=6784cb6872eb1b38720a5c2eb61f23cadfbeb46542ba5a56629265baf1fe75e2&X-Amz-SignedHeaders=host&x-id=GetObject" className="App-logo" alt="logo" />
+          <img src={logo} className="App-logo" alt="logo" />
           <h1>Vonage video Api</h1>
         </div>
       </div>
@@ -217,6 +214,7 @@ function VideoComponent() {
           dataBlobUrl={chunk}
           translatedBuffer={translatedBuffer}
           setTranslatedBuffer={setTranslatedBuffer}
+          isInterviewStarted={isInterviewStarted}
         />
       ) : null}
     </>

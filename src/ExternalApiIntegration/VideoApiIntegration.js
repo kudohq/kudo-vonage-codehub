@@ -30,15 +30,9 @@ export function initializeSession(setChunk, recorderRef, isAdmin) {
     } else {
     }
   });
-  // Subscribing to stream
-  session.on("streamCreated", function (event) {
-    const subscriberOptions = {
-      insertMode: "append",
-      width: "100%",
-      height: "100%",
-    };
-    navigator.mediaDevices
-      .getUserMedia({ audio: true })
+
+  if(isAdmin){
+      OT.getUserMedia({ audio: true })
       .then(function (stream) {
         recorderRef.current = new RecordRTC(stream, {
           type: "audio",
@@ -54,6 +48,15 @@ export function initializeSession(setChunk, recorderRef, isAdmin) {
       .catch(function (error) {
         console.error("Error accessing microphone:", error);
       });
+  }
+
+  // Subscribing to stream
+  session.on("streamCreated", function (event) {
+    const subscriberOptions = {
+      insertMode: "append",
+      width: "100%",
+      height: "100%",
+    };
 
     session.subscribe(
       event.stream,
@@ -99,7 +102,6 @@ function createAudioStream(audioBuffer, audioContext) {
   const player = audioContext.createBufferSource();
   player.buffer = audioBuffer;
   player.start(startTime);
-  player.loop = true;
 
   const destination = audioContext.createMediaStreamDestination();
   panner = audioContext.createStereoPanner();
@@ -162,15 +164,11 @@ export function publish(translatedBuffer) {
         publisher.publishAudio(true); // Start publishing audio again
       }
 
-      setTimeout(() => {
-        stop();
-        audioContext.close();
-      }, 5000);
 
       publisher.on("destroyed", () => {
         // When the publisher is destroyed we cleanup
-        // stop();
-        // audioContext.close();
+        stop();
+        audioContext.close();
       });
     })
     .catch((error) => {

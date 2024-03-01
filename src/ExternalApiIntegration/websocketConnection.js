@@ -7,11 +7,12 @@ export const WebsocketConnection = ({
   dataBlobUrl,
   translatedBuffer,
   setTranslatedBuffer,
+  isInterviewStarted,
 }) => {
   const SERVER_URL =
     "wss://external-api-staging.meetkudo.com/api/v1/translate?id=d5c3c200-ce99-4f4c-8f39-abdbf523d8ad";
   const API_TOKEN =
-    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA5MjA1MTM3LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDkyOTE1MzcsImlhdCI6MTcwOTIwNTEzNywidmVyc2lvbiI6MiwianRpIjoiY2YwYzUzYTMtNmJjMC00ZjllLWI1YmEtNDExZTMzNmRkZDlhIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.UUgPGNg2_BO2zcjpTBBcuG1kfem2CkpvLE0vC__9iUYfBrHwI9YMQWPhbUNWS0k8ZoMN_5iyFP4pEjiKqBzGjmCKHbLWRMx-LHtpDPd7-685bvCeGtlu0DFiIRJ5fKTVB7CNQIFcj5-9Sn0AdNnyivNo9LUhqn5YBfSyS1_NRzARxpvZe0nuIN_BQw_OHTyc6YyJjZJApUKMDLfuftNHborwSd9QLjXxTXNAo1PZdsi_tr85BconS2mClBNDk54dWv1Sjk2m4-DaXv3Z2ioGYv1HkvlhpvRSKsm7Sn786Swm9s92mfnguMFJlPO-3fB-7KiCgXZJwrWIg_3NDTSjXg";
+    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA5MjkxODk0LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDkzNzgyOTQsImlhdCI6MTcwOTI5MTg5NCwidmVyc2lvbiI6MiwianRpIjoiNGMxMjc4MjYtNGE2MC00NmZmLTg0ZmMtNWM3MzhhZTY2ZmJmIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.gRAvSzQfeixeN9V4LUvfJ8Dv8ER0-hHJDhsm1W6UQIuO6o0WLAZzrgMb_9_FLIxo_doNMdbs1xzgZdQqPXJREE6qzYqzzAhRZZCOufTd0UbnIFzLZuydGB9z3hw6rrs2YUQV6Vg85keXv1k4LOMNbyqa4EED14f0e0xtuejFhAUUO_qBQhTl-UkB6lS9Q9IGPKlyBX8q1eQPFx9t5mgKTzc3QZfwmWnOnoTYziD5EDKFctxhWyDlnJuuPhPvcS_EmnNhZWMKDrreCRyo1tpM2DbbzJtqy6UImB0hKrMNG4JMKU5u-WHeNnRiSUmf6Uc7YFX9Af99Q_hyJg1fxDW4_w";
   const [binaryData, setBinaryData] = useState("audio/wav;base64,");
   const [index, setIndex] = useState(0);
   // converting the data to valid binary format
@@ -29,7 +30,7 @@ export const WebsocketConnection = ({
     return array;
   }
 
-  const { sendMessage } = useWebSocket(SERVER_URL, {
+  const { getWebSocket, sendMessage } = useWebSocket(SERVER_URL, {
     onOpen: () => {
       console.log("WebSocket connection established.");
     },
@@ -54,6 +55,10 @@ export const WebsocketConnection = ({
       };
       reader.readAsArrayBuffer(audioBlob);
       setIndex((prevIndex) => prevIndex + 1); // Increment index by 1
+      if(!isInterviewStarted){
+        getWebSocket().close();
+      }
+
     },
     onClose: (e) => {
       var binary = convertDataURIToBinary(binaryData);
@@ -63,7 +68,6 @@ export const WebsocketConnection = ({
       console.log("closed", e);
     },
     onError: (e) => console.error("Error in websocket", e),
-    share: true,
     shouldReconnect: () => false,
     protocols: ["Authorization", API_TOKEN],
   });
