@@ -3,13 +3,17 @@ import useWebSocket from "react-use-websocket";
 import { useCallback, useEffect, useState } from "react";
 import { saveAs } from "file-saver";
 
-export const WebsocketConnection = ({ dataBlobUrl }) => {
+export const WebsocketConnection = ({
+  dataBlobUrl,
+  translatedBuffer,
+  setTranslatedBuffer,
+}) => {
   const SERVER_URL =
     "wss://external-api-staging.meetkudo.com/api/v1/translate?id=d5c3c200-ce99-4f4c-8f39-abdbf523d8ad";
   const API_TOKEN =
-    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA4NjgzOTYzLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDg3NzAzNjMsImlhdCI6MTcwODY4Mzk2MywidmVyc2lvbiI6MiwianRpIjoiODM2YWQxZGUtZTE0Zi00MmE5LWJkY2YtZWMwMmRjYzY3ZGRiIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.kC-mRwg8L6KT3KRoUlWKxRcM-57s9vMXHx7TwfTMC1u8x4vaYOhu1A2ZZ4zkaVfAQRzJivzAYWY5gvmk6FZpbSzk921FiXm5sx5gA_fUAikWm6DdWUPu1OGiCGWHD9NO9DGYl70DM-l-ESyqMQiSygqYMSQcY23qVhiVSZE1qMBzN4_LNcbAWip9smFzjeX7jYxxNc6CaUl2oR-k1q3PyWTdcle9qAZJsIkaUSSRMSzjYT962vzzKyNo55Gkzbk8EWEHWneiJH-pfOpS28nM6wxOmEi5wnFIvTCShEh2aprCcYPDIHxnUjtgjnAZbIqOQ10kEpVKKiQrScpNwAkL2Q"
-      const [binaryData, setBinaryData] = useState("audio/wav;base64,");
-
+    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA5MjA1MTM3LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDkyOTE1MzcsImlhdCI6MTcwOTIwNTEzNywidmVyc2lvbiI6MiwianRpIjoiY2YwYzUzYTMtNmJjMC00ZjllLWI1YmEtNDExZTMzNmRkZDlhIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.UUgPGNg2_BO2zcjpTBBcuG1kfem2CkpvLE0vC__9iUYfBrHwI9YMQWPhbUNWS0k8ZoMN_5iyFP4pEjiKqBzGjmCKHbLWRMx-LHtpDPd7-685bvCeGtlu0DFiIRJ5fKTVB7CNQIFcj5-9Sn0AdNnyivNo9LUhqn5YBfSyS1_NRzARxpvZe0nuIN_BQw_OHTyc6YyJjZJApUKMDLfuftNHborwSd9QLjXxTXNAo1PZdsi_tr85BconS2mClBNDk54dWv1Sjk2m4-DaXv3Z2ioGYv1HkvlhpvRSKsm7Sn786Swm9s92mfnguMFJlPO-3fB-7KiCgXZJwrWIg_3NDTSjXg";
+  const [binaryData, setBinaryData] = useState("audio/wav;base64,");
+  const [index, setIndex] = useState(0);
   // converting the data to valid binary format
   function convertDataURIToBinary(dataURI) {
     var BASE64_MARKER = ";base64,";
@@ -35,6 +39,21 @@ export const WebsocketConnection = ({ dataBlobUrl }) => {
       console.log("Websocket response", data);
 
       setBinaryData((prev) => prev + data.audioData);
+      var data1 = "audio/wav;base64," + data.audioData;
+      var bufferData = convertDataURIToBinary(data1);
+      var audioBlob = new Blob([bufferData], { type: "audio/wav" });
+
+      var reader = new FileReader();
+      reader.onload = function (event) {
+        var audioData = event.target.result;
+
+          setTranslatedBuffer((prevData) => ({
+            ...prevData,
+            [index]: audioData,
+          }));
+      };
+      reader.readAsArrayBuffer(audioBlob);
+      setIndex((prevIndex) => prevIndex + 1); // Increment index by 1
     },
     onClose: (e) => {
       var binary = convertDataURIToBinary(binaryData);

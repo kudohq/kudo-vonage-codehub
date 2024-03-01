@@ -18,8 +18,8 @@ export const LanguageSelector = ({ setValue }) => {
 
   return (
     <div className="languageSelector">
-      <div className="mt-5 m-auto w-50 text-light">
-        <Select options={options} onChange={handleChange} />
+      <div className="m-auto text-light">
+        <Select className="options" options={options} onChange={handleChange} />
       </div>
     </div>
   );

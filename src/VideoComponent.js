@@ -20,25 +20,27 @@ import {
 } from "./ExternalApiIntegration/VideoApiIntegration";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
-import { CreateLanguageChannel } from "./CreateLanguageChannel"
+import { useLocation } from "react-router-dom";
 import "./VideoChatComponent.scss";
 
 function VideoComponent() {
+  const location = useLocation();
+  const isAdmin = location.state.isAdmin;
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioSubscribed, setIsAudioSubscribed] = useState(true);
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
-  const [translatedBlob, setTranslatedBlob] = useState(null);
+  const [translatedBuffer, setTranslatedBuffer] = useState(null);
   const [chunk, setChunk] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState("ENGLISH");
+  const [index, setIndex] = useState(0);
   const recorderRef = useRef(null);
 
-  console.log({ chunk });
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, recorderRef);
+      initializeSession(setChunk, recorderRef, isAdmin);
     } else {
       stopStreaming();
 
@@ -47,6 +49,18 @@ function VideoComponent() {
       }
     }
   }, [isInterviewStarted]);
+
+  useEffect(() =>{
+    if(translatedBuffer){
+      console.log("translatedBuffer inside use effect", index, translatedBuffer);
+      // setTimeout(() => {
+        publish(translatedBuffer[index])
+      // }, 5000)
+      setIndex((prevIndex) => prevIndex + 1);
+      console.log("after use effect", index, translatedBuffer);
+
+    }
+  }, [translatedBuffer])
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -148,18 +162,20 @@ function VideoComponent() {
     <>
       <div className="App">
         <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src="https://spaceheater-dev-assets.s3.us-west-2.amazonaws.com/public/images/a.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAQ52YLVEQDF4NBDHK%2F20240229%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20240229T120350Z&X-Amz-Expires=3600&X-Amz-Signature=6784cb6872eb1b38720a5c2eb61f23cadfbeb46542ba5a56629265baf1fe75e2&X-Amz-SignedHeaders=host&x-id=GetObject" className="App-logo" alt="logo" />
           <h1>Vonage video Api</h1>
         </div>
       </div>
       <div className="actions-btns">
-        <Button
-          onClick={publish}
+        { isAdmin ? (
+          <Button
+          onClick={() => publish(translatedBuffer)}
           color="primary"
           variant="contained"
         >
           Start Publishing
         </Button>
+        ) : null}
         <Button
           onClick={() => setIsInterviewStarted(true)}
           disabled={isInterviewStarted}
@@ -168,7 +184,7 @@ function VideoComponent() {
         >
           Start chat
         </Button>
-        <Button
+          <Button
           onClick={() => setIsInterviewStarted(false)}
           disabled={!isInterviewStarted}
           color="secondary"
@@ -199,7 +215,8 @@ function VideoComponent() {
       {chunk ? (
         <WebsocketConnection
           dataBlobUrl={chunk}
-          translatedBlob={translatedBlob}
+          translatedBuffer={translatedBuffer}
+          setTranslatedBuffer={setTranslatedBuffer}
         />
       ) : null}
     </>
