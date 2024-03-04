@@ -2,6 +2,9 @@
 import useWebSocket from "react-use-websocket";
 import { useCallback, useEffect, useState } from "react";
 import { saveAs } from "file-saver";
+import { AUTH_TOKEN } from "../config"
+import FetchApiToken from './fetchApiToken'
+import CreateTranslationResource from './createTranslationResource'
 
 export const WebsocketConnection = ({
   dataBlobUrl,
@@ -9,12 +12,20 @@ export const WebsocketConnection = ({
   setTranslatedBuffer,
   isInterviewStarted,
 }) => {
+  const resourceId = '58269166-f11c-456d-a535-63adcad11f49';
   const SERVER_URL =
-    "wss://external-api-staging.meetkudo.com/api/v1/translate?id=d5c3c200-ce99-4f4c-8f39-abdbf523d8ad";
-  const API_TOKEN =
-    "eyJraWQiOiIwSGkrOHhFbTV3NlwvN21NdmdkXC9YQThHYzdmSitwMUpYQTM3SjdCOVhiRkU9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiI3dTAwNmh1bWZxMXY4c2VuNmdiMGZmNXZtaiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoic2hhcmVkLXNlcnZpY2VzXC9zZXJ2aWNlIiwiYXV0aF90aW1lIjoxNzA5MjkxODk0LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtd2VzdC0xLmFtYXpvbmF3cy5jb21cL2V1LXdlc3QtMV9lUFNxNjlpQ3kiLCJleHAiOjE3MDkzNzgyOTQsImlhdCI6MTcwOTI5MTg5NCwidmVyc2lvbiI6MiwianRpIjoiNGMxMjc4MjYtNGE2MC00NmZmLTg0ZmMtNWM3MzhhZTY2ZmJmIiwiY2xpZW50X2lkIjoiN3UwMDZodW1mcTF2OHNlbjZnYjBmZjV2bWoifQ.gRAvSzQfeixeN9V4LUvfJ8Dv8ER0-hHJDhsm1W6UQIuO6o0WLAZzrgMb_9_FLIxo_doNMdbs1xzgZdQqPXJREE6qzYqzzAhRZZCOufTd0UbnIFzLZuydGB9z3hw6rrs2YUQV6Vg85keXv1k4LOMNbyqa4EED14f0e0xtuejFhAUUO_qBQhTl-UkB6lS9Q9IGPKlyBX8q1eQPFx9t5mgKTzc3QZfwmWnOnoTYziD5EDKFctxhWyDlnJuuPhPvcS_EmnNhZWMKDrreCRyo1tpM2DbbzJtqy6UImB0hKrMNG4JMKU5u-WHeNnRiSUmf6Uc7YFX9Af99Q_hyJg1fxDW4_w";
+    `wss://external-api-staging.meetkudo.com/api/v1/translate?id=${resourceId}`;
+  const API_TOKEN = AUTH_TOKEN;
   const [binaryData, setBinaryData] = useState("audio/wav;base64,");
   const [index, setIndex] = useState(0);
+  // const token = FetchApiToken();
+  // console.log("api", token);
+
+  // const id = CreateTranslationResource();
+  // console.log("id", id);
+
+
+
   // converting the data to valid binary format
   function convertDataURIToBinary(dataURI) {
     var BASE64_MARKER = ";base64,";
