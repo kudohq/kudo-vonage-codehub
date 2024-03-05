@@ -8,11 +8,12 @@ import CreateTranslationResource from './createTranslationResource'
 
 export const WebsocketConnection = ({
   dataBlobUrl,
-  translatedBuffer,
+  SelectedLanguage,
   setTranslatedBuffer,
   isInterviewStarted,
 }) => {
-  const resourceId = '58269166-f11c-456d-a535-63adcad11f49';
+  const resourceId = '41d4cbd8-c3fc-45f8-bc24-893e0cba363b';
+  // const resourceId = CreateTranslationResource(SelectedLanguage);
   const SERVER_URL =
     `wss://external-api-staging.meetkudo.com/api/v1/translate?id=${resourceId}`;
   const API_TOKEN = AUTH_TOKEN;
@@ -21,7 +22,7 @@ export const WebsocketConnection = ({
   // const token = FetchApiToken();
   // console.log("api", token);
 
-  // const id = CreateTranslationResource();
+  // const id = CreateTranslationResource(SelectedLanguage);
   // console.log("id", id);
 
 

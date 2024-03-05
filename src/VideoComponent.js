@@ -25,7 +25,7 @@ import "./VideoChatComponent.scss";
 
 function VideoComponent() {
   const location = useLocation();
-  const isAdmin = location.state.isAdmin;
+  const isHost = location.state.role;
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -40,7 +40,7 @@ function VideoComponent() {
 
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, recorderRef, isAdmin);
+      initializeSession(setChunk, recorderRef, isHost);
     } else {
       stopStreaming();
 
@@ -164,7 +164,7 @@ function VideoComponent() {
         </div>
       </div>
       <div className="actions-btns">
-        { isAdmin ? (
+        { isHost ? (
           <Button
           onClick={() => publish(translatedBuffer)}
           color="primary"
@@ -215,6 +215,7 @@ function VideoComponent() {
           translatedBuffer={translatedBuffer}
           setTranslatedBuffer={setTranslatedBuffer}
           isInterviewStarted={isInterviewStarted}
+          SelectedLanguage={SelectedLanguage}
         />
       ) : null}
     </>

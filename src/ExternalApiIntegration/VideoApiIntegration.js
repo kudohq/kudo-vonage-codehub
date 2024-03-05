@@ -12,8 +12,8 @@ function handleError(error) {
   }
 }
 
-export function initializeSession(setChunk, recorderRef, isAdmin) {
-  let token = isAdmin ? H_TOKEN : P_TOKEN;
+export function initializeSession(setChunk, recorderRef, isHost) {
+  let token = isHost ? H_TOKEN : P_TOKEN;
   if (session && session.isConnected()) {
     session.disconnect();
   }
@@ -31,7 +31,7 @@ export function initializeSession(setChunk, recorderRef, isAdmin) {
     }
   });
 
-  if(isAdmin){
+  if(isHost){
       OT.getUserMedia({ audio: true })
       .then(function (stream) {
         recorderRef.current = new RecordRTC(stream, {

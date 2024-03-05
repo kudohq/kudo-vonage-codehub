@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import { baseService } from "./baseService";
 import { AUTH_TOKEN } from "../config";
 
-const CreateTranslationResource = () => {
+const CreateTranslationResource = (targetLanguage) => {
   const [translationResource, setTranslationResource] = useState(null);
   const requestData = {
     clientId: 'kudo-staging-payments-auth-client',
     sourceLanguages:["ENG"],
-    targetLanguages: ["CHI"],
+    targetLanguages: `["${targetLanguage}"]`,
     voiceGender: "female"
   };
 
