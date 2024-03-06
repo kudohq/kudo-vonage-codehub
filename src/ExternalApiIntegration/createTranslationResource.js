@@ -1,43 +1,34 @@
-import { useState, useEffect } from "react";
 import { baseService } from "./baseService";
 import { AUTH_TOKEN } from "../config";
 
-const CreateTranslationResource = (targetLanguage) => {
-  const [translationResource, setTranslationResource] = useState(null);
+const createTranslationResource = async (targetLanguage) => {
   const requestData = {
     clientId: 'kudo-staging-payments-auth-client',
     sourceLanguages:["ENG"],
-    targetLanguages: `["${targetLanguage}"]`,
+    targetLanguages: [`${targetLanguage}`],
     voiceGender: "female"
   };
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        const response = await baseService.post(
-          "https://external-api-staging.meetkudo.com/api/v1/translation_resource",
-           JSON.stringify(requestData),
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-token": AUTH_TOKEN,
-            },
-          }
-        );
-        if (!response.data) {
-          throw new Error("Failed to create translation resource");
-        }
-
-        setTranslationResource(response.data.body.id);
-      } catch (error) {
-        console.error("Error creating translation resource:", error);
+  try {
+    const response = await baseService.post(
+      "https://external-api-staging.meetkudo.com/api/v1/translation_resource",
+       JSON.stringify(requestData),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-token": AUTH_TOKEN,
+        },
       }
-    };
+    );
+    if (!response.data) {
+      throw new Error("Failed to create translation resource");
+    }
 
-    fetchToken();
-  }, []);
-
-  return translationResource;
+    return response.data.body.id;
+  } catch (error) {
+    console.error("Error creating translation resource:", error);
+    return null;
+  }
 };
 
-export default CreateTranslationResource;
+export default createTranslationResource;

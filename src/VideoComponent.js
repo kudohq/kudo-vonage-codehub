@@ -21,6 +21,7 @@ import {
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
 import { useLocation } from "react-router-dom";
+import CreateTranslationResource from './ExternalApiIntegration/createTranslationResource'
 import "./VideoChatComponent.scss";
 
 function VideoComponent() {
@@ -34,8 +35,9 @@ function VideoComponent() {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
   const [chunk, setChunk] = useState(null);
-  const [SelectedLanguage, setSelectedLanguage] = useState("ENGLISH");
+  const [SelectedLanguage, setSelectedLanguage] = useState({value: 'ENG', label: 'ENGLISH'});
   const [index, setIndex] = useState(0);
+  const [resourceId, setResourceId] = useState(null);
   const recorderRef = useRef(null);
 
   useEffect(() => {
@@ -54,10 +56,15 @@ function VideoComponent() {
     if(translatedBuffer){
       publish(translatedBuffer[index])
       setIndex((prevIndex) => prevIndex + 1);
-      console.log("after use effect", index, translatedBuffer);
 
     }
   }, [translatedBuffer])
+
+  useEffect(() => {
+    CreateTranslationResource(SelectedLanguage.value)
+      .then((id) => setResourceId(id))
+      .catch((error) => console.error("Error creating translation resource:", error));
+  }, [isInterviewStarted, SelectedLanguage]);
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -81,7 +88,7 @@ function VideoComponent() {
       <>
         {isInterviewStarted && (
           <div className="video-toolbar">
-            <LanguageSelector setValue={setSelectedLanguage} />
+            <LanguageSelector setValue={setSelectedLanguage} isHost={isHost} />
             <div className="video-tools">
               {isAudioEnabled ? (
                 <Tooltip title="mic on">
@@ -209,13 +216,13 @@ function VideoComponent() {
         </div>
       </div>
 
-      {chunk ? (
+      {chunk && resourceId ? (
         <WebsocketConnection
           dataBlobUrl={chunk}
           translatedBuffer={translatedBuffer}
           setTranslatedBuffer={setTranslatedBuffer}
           isInterviewStarted={isInterviewStarted}
-          SelectedLanguage={SelectedLanguage}
+          resourceId={resourceId}
         />
       ) : null}
     </>
