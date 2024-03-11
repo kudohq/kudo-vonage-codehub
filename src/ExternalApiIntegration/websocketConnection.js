@@ -5,6 +5,7 @@ import { saveAs } from "file-saver";
 import { AUTH_TOKEN } from "../config"
 import FetchApiToken from './fetchApiToken'
 import CreateTranslationResource from './createTranslationResource'
+import { publish } from "./VideoApiIntegration";
 
 export const WebsocketConnection = ({
   dataBlobUrl,
@@ -14,9 +15,9 @@ export const WebsocketConnection = ({
 }) => {
   // const resourceId = '41d4cbd8-c3fc-45f8-bc24-893e0cba363b';
   // const resourceId = CreateTranslationResource(SelectedLanguage);
-  console.log("id", resourceId);
+
   const SERVER_URL =
-    `wss://external-api-staging.meetkudo.com/api/v1/translate?id=${resourceId}`;
+  `wss://external-api-staging.meetkudo.com/api/v1/translate?id=${resourceId}`;
   const API_TOKEN = AUTH_TOKEN;
   const [binaryData, setBinaryData] = useState("audio/wav;base64,");
   const [index, setIndex] = useState(0);
@@ -61,10 +62,7 @@ export const WebsocketConnection = ({
       reader.onload = function (event) {
         var audioData = event.target.result;
 
-          setTranslatedBuffer((prevData) => ({
-            ...prevData,
-            [index]: audioData,
-          }));
+        publish(audioData, data.targetLanguage);
       };
       reader.readAsArrayBuffer(audioBlob);
       setIndex((prevIndex) => prevIndex + 1); // Increment index by 1
@@ -76,7 +74,7 @@ export const WebsocketConnection = ({
     onClose: (e) => {
       var binary = convertDataURIToBinary(binaryData);
       var blob = new Blob([binary], { type: "audio/wav" });
-      saveAs(blob, "audio-output.ogg");
+      // saveAs(blob, "audio-output.ogg");
 
       console.log("closed", e);
     },

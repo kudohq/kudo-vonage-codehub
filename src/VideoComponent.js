@@ -10,10 +10,11 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Tooltip, Button } from "@mui/material";
 import logo from "./Group.png";
 import {
-  toggleAudio,
+  toggleAudio,  
   toggleVideo,
   toggleAudioSubscribtion,
   toggleVideoSubscribtion,
+  togglePublisherDestroy,
   initializeSession,
   stopStreaming,
   publish,
@@ -26,7 +27,9 @@ import "./VideoChatComponent.scss";
 
 function VideoComponent() {
   const location = useLocation();
-  const isHost = location.state.role;
+  const state = location.state.form;
+  const predefinedTargetLanguge = state.target.map(x => x.value);
+  const language = location.state.language;
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -34,15 +37,16 @@ function VideoComponent() {
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
+  const [SelectedLanguage, setSelectedLanguage] = useState({value: 'HIN', label: 'HINDI'});
   const [chunk, setChunk] = useState(null);
-  const [SelectedLanguage, setSelectedLanguage] = useState({value: 'ENG', label: 'ENGLISH'});
-  const [index, setIndex] = useState(0);
   const [resourceId, setResourceId] = useState(null);
+  const [index, setIndex] = useState(0);
   const recorderRef = useRef(null);
 
+  const isHost = state.role === "Host";
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, recorderRef, isHost);
+      initializeSession(setChunk, recorderRef, isHost, SelectedLanguage.value);
     } else {
       stopStreaming();
 
@@ -52,19 +56,20 @@ function VideoComponent() {
     }
   }, [isInterviewStarted]);
 
-  useEffect(() =>{
-    if(translatedBuffer){
-      publish(translatedBuffer[index])
+  useEffect(() => {
+    if (translatedBuffer) {
+      publish(translatedBuffer[index]);
       setIndex((prevIndex) => prevIndex + 1);
-
     }
-  }, [translatedBuffer])
+  }, [translatedBuffer]);
 
   useEffect(() => {
-    CreateTranslationResource(SelectedLanguage.value)
+    if(isHost){
+      CreateTranslationResource(predefinedTargetLanguge, state.source)
       .then((id) => setResourceId(id))
       .catch((error) => console.error("Error creating translation resource:", error));
-  }, [isInterviewStarted, SelectedLanguage]);
+    }
+  }, []);
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -83,79 +88,85 @@ function VideoComponent() {
     toggleVideoSubscribtion(action);
   };
 
+  const onTogglePublisherDestroy = (action) => {
+    setIsInterviewStarted(action);
+    togglePublisherDestroy();
+  };
+
   const renderToolbar = () => {
     return (
       <>
         {isInterviewStarted && (
           <div className="video-toolbar">
-            <LanguageSelector setValue={setSelectedLanguage} isHost={isHost} />
-            <div className="video-tools">
-              {isAudioEnabled ? (
-                <Tooltip title="mic on">
-                  <MicIcon
-                    onClick={() => onToggleAudio(false)}
-                    className="on-icon"
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip title="mic off">
-                  <MicOffIcon
-                    onClick={() => onToggleAudio(true)}
-                    className="off-icon"
-                  />
-                </Tooltip>
-              )}
-              {isVideoEnabled ? (
-                <Tooltip title="camera on">
-                  <VideocamIcon
-                    onClick={() => onToggleVideo(false)}
-                    className="on-icon"
-                  />
-                </Tooltip>
-              ) : (
-                <Tooltip title="camera off">
-                  <VideocamOffIcon
-                    onClick={() => onToggleVideo(true)}
-                    className="off-icon"
-                  />
-                </Tooltip>
-              )}
+            {isHost ? (
+              <div className="video-tools">
+                {isAudioEnabled ? (
+                  <Tooltip title="mic on">
+                    <MicIcon
+                      onClick={() => onToggleAudio(false)}
+                      className="on-icon"
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="mic off">
+                    <MicOffIcon
+                      onClick={() => onToggleAudio(true)}
+                      className="off-icon"
+                    />
+                  </Tooltip>
+                )}
+                {isVideoEnabled ? (
+                  <Tooltip title="camera on">
+                    <VideocamIcon
+                      onClick={() => onToggleVideo(false)}
+                      className="on-icon"
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title="camera off">
+                    <VideocamOffIcon
+                      onClick={() => onToggleVideo(true)}
+                      className="off-icon"
+                    />
+                  </Tooltip>
+                )}
 
-              {isStreamSubscribed && (
-                <>
-                  {isAudioSubscribed ? (
-                    <Tooltip title="sound on">
-                      <VolumeUpIcon
-                        onClick={() => onToggleAudioSubscribtion(false)}
-                        className="on-icon"
-                      />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title="sound off">
-                      <VolumeOffIcon
-                        onClick={() => onToggleAudioSubscribtion(true)}
-                        className="off-icon"
-                      />
-                    </Tooltip>
-                  )}
-                  {isVideoSubscribed ? (
-                    <Tooltip title="screen on">
-                      <VisibilityIcon
-                        onClick={() => onToggleVideoSubscribtion(false)}
-                        className="on-icon"
-                      />
-                    </Tooltip>
-                  ) : (
-                    <Tooltip title="screen of">
-                      <VisibilityOffIcon
-                        onClick={() => onToggleVideoSubscribtion(true)}
-                        className="off-icon"
-                      />
-                    </Tooltip>
-                  )}
-                </>
-              )}
-            </div>
+                {isStreamSubscribed && (
+                  <>
+                    {isAudioSubscribed ? (
+                      <Tooltip title="sound on">
+                        <VolumeUpIcon
+                          onClick={() => onToggleAudioSubscribtion(false)}
+                          className="on-icon"
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="sound off">
+                        <VolumeOffIcon
+                          onClick={() => onToggleAudioSubscribtion(true)}
+                          className="off-icon"
+                        />
+                      </Tooltip>
+                    )}
+                    {isVideoSubscribed ? (
+                      <Tooltip title="screen on">
+                        <VisibilityIcon
+                          onClick={() => onToggleVideoSubscribtion(false)}
+                          className="on-icon"
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="screen of">
+                        <VisibilityOffIcon
+                          onClick={() => onToggleVideoSubscribtion(true)}
+                          className="off-icon"
+                        />
+                      </Tooltip>
+                    )}
+                  </>
+                )}
+              </div>
+            ) : <LanguageSelector setSelectedLanguage={setSelectedLanguage} />}
           </div>
         )}
       </>
@@ -171,14 +182,14 @@ function VideoComponent() {
         </div>
       </div>
       <div className="actions-btns">
-        { isHost ? (
+        {isHost && isInterviewStarted ? (
           <Button
-          onClick={() => publish(translatedBuffer)}
-          color="primary"
-          variant="contained"
-        >
-          Start Publishing
-        </Button>
+            onClick={() => publish(translatedBuffer)}
+            color="primary"
+            variant="contained"
+          >
+            Start Publishing
+          </Button>
         ) : null}
         <Button
           onClick={() => setIsInterviewStarted(true)}
@@ -186,16 +197,18 @@ function VideoComponent() {
           color="primary"
           variant="contained"
         >
-          Start chat
+          {isHost ? "Start Webinar" : "Join Webinar"}
         </Button>
+        {isHost ? (
           <Button
-          onClick={() => setIsInterviewStarted(false)}
-          disabled={!isInterviewStarted}
-          color="secondary"
-          variant="contained"
-        >
-          Finish chat
-        </Button>
+            onClick={() => onTogglePublisherDestroy(false)}
+            disabled={!isInterviewStarted}
+            color="secondary"
+            variant="contained"
+          >
+            End Webinar
+          </Button>
+        ) : null}
       </div>
       <div className="video-container">
         <div

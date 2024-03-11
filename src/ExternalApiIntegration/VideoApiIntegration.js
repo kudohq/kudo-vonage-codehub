@@ -1,10 +1,10 @@
 import OT from "@opentok/client";
 
-import { API_KEY, SESSION_ID, P_TOKEN, H_TOKEN } from "../config";
+import { API_KEY, SESSION_ID, P_TOKEN, S_TOKEN } from "../config";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 let apiKey = API_KEY;
 let sessionId = SESSION_ID;
-let session, subscriber, publisher, panner;
+let session, subscriber, publisher1, publisher2, panner;
 
 function handleError(error) {
   if (error) {
@@ -12,8 +12,13 @@ function handleError(error) {
   }
 }
 
-export function initializeSession(setChunk, recorderRef, isHost) {
-  let token = isHost ? H_TOKEN : P_TOKEN;
+export function initializeSession(
+  setChunk,
+  recorderRef,
+  isHost,
+  SelectedLanguage
+) {
+  let token = isHost ? P_TOKEN : S_TOKEN;
   if (session && session.isConnected()) {
     session.disconnect();
   }
@@ -31,8 +36,8 @@ export function initializeSession(setChunk, recorderRef, isHost) {
     }
   });
 
-  if(isHost){
-      OT.getUserMedia({ audio: true })
+  if (isHost) {
+    OT.getUserMedia({ audio: true })
       .then(function (stream) {
         recorderRef.current = new RecordRTC(stream, {
           type: "audio",
@@ -57,15 +62,16 @@ export function initializeSession(setChunk, recorderRef, isHost) {
       width: "100%",
       height: "100%",
     };
-
-    session.subscribe(
-      event.stream,
-      "subscriber",
-      subscriberOptions,
-      handleError
-    );
+    if (SelectedLanguage === event.stream.name) {
+      session.subscribe(
+        event.stream,
+        "subscriber",
+        subscriberOptions,
+        handleError
+      );
+      console.log("subscriber", event);
+    }
   });
-
   // Do some action on destroying the stream
   session.on("sessionDisconnected", function (event) {
     console.log("event in destroyed", event);
@@ -73,21 +79,31 @@ export function initializeSession(setChunk, recorderRef, isHost) {
 }
 
 export function stopStreaming() {
-  session && session.unpublish(publisher);
+  if (session) {
+    session.unpublish(publisher1);
+    session.unpublish(publisher2);
+  }
 }
 
 // The following functions are used in functionality customization
 export function toggleVideo(state) {
-  publisher.publishVideo(state);
+  publisher1.publishVideo(state);
+  publisher2.publishVideo(state);
 }
 export function toggleAudio(state) {
-  publisher.publishAudio(state);
+  publisher1.publishAudio(state);
+  publisher2.publishAudio(state);
 }
 export function toggleAudioSubscribtion(state) {
   subscriber.subscribeToAudio(state);
 }
 export function toggleVideoSubscribtion(state) {
   subscriber.subscribeToVideo(state);
+}
+
+export function togglePublisherDestroy(state) {
+  publisher1.disconnect();
+  publisher2.disconnect();
 }
 
 function getAudioBuffer(buffer, audioContext) {
@@ -117,7 +133,7 @@ function createAudioStream(audioBuffer, audioContext) {
   };
 }
 
-export function publish(translatedBuffer) {
+export function publish(translatedBuffer, targetLanguage) {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   // Create audio stream from mp3 file and video stream from webcam
   Promise.all([
@@ -132,7 +148,7 @@ export function publish(translatedBuffer) {
       );
 
       // initialize the publisher
-      if (!publisher) {
+      if (!publisher1) {
         const publisherOptions = {
           insertMode: "append",
           width: "100%",
@@ -143,33 +159,68 @@ export function publish(translatedBuffer) {
           enableStereo: true,
           // Increasing audio bitrate is recommended for stereo music
           audioBitrate: 128000,
+          name: "HIN",
         };
-        publisher = OT.initPublisher("publisher", publisherOptions, (error) => {
-          if (error) {
-            handleError(error);
-          } else {
-            // If the connection is successful, publish the publisher to the session
-            session.publish(publisher, (error) => {
-              if (error) {
-                handleError(error);
-              }
-            });
+        console.log("publisher 1 if");
+        publisher1 = OT.initPublisher(
+          "publisher",
+          publisherOptions,
+          (error) => {
+            if (error) {
+              handleError(error);
+            } else {
+              // If the connection is successful, publish the publisher1 to the session
+              session.publish(publisher1, (error) => {
+                if (error) {
+                  handleError(error);
+                }
+              });
+            }
           }
-        });
+        );
+        publisher2 = OT.initPublisher(
+          "publisher",
+          { ...publisherOptions, name: "CHI" },
+          (error) => {
+            if (error) {
+              handleError(error);
+            } else {
+              // If the connection is successful, publish the publisher1 to the session
+              session.publish(publisher2, (error) => {
+                if (error) {
+                  handleError(error);
+                }
+              });
+            }
+          }
+        );
       } else {
         console.log("elseelseelselelse");
-        // If publisher is already initialized, update the audio source
-        publisher.publishAudio(false); // Stop publishing audio temporarily
-        publisher.setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
-        publisher.publishAudio(true); // Start publishing audio again
+        // If publisher1 is already initialized, update the audio source
+        if (targetLanguage === "HIN") {
+          console.log("publisher 1 else");
+          publisher1.publishAudio(false); // Stop publishing audio temporarily
+          publisher1.setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
+          publisher1.publishAudio(true); // Start publishing audio again
+        }
+        // If publisher2 is already initialized, update the audio source
+        if (targetLanguage === "CHI") {
+          publisher2.publishAudio(false); // Stop publishing audio temporarily
+          publisher2.setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
+          publisher2.publishAudio(true); // Start publishing audio again
+        }
       }
 
-
-      publisher.on("destroyed", () => {
-        // When the publisher is destroyed we cleanup
-        stop();
-        audioContext.close();
-      });
+      // publisher1.on("destroyed", () => {
+      //   // When the publisher is destroyed we cleanup
+      //   stop();
+      //   audioContext.close();
+      // });
+      // publisher2.on("destroyed", () => {
+      //   // When the publisher is destroyed we cleanup
+      //   stop();
+      //   audioContext.close();
+      // });
     })
     .catch((error) => {
       audioContext.close();

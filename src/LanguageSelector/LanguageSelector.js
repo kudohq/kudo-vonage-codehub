@@ -1,19 +1,13 @@
 import React from "react";
 import "./LanguageSelector.scss";
 import Select from "react-select";
-import { targetLanguages } from "../constants/targetLanguages"
-import { sourceLanguages } from "../constants/sourceLanguages"
 
+export const LanguageSelector = ({setSelectedLanguage}) => {
 
-export const LanguageSelector = ({setValue, isHost}) => {
-  const languages = isHost ? sourceLanguages : targetLanguages;
-  const options = languages.map(language => ({
-    value: language.code,
-    label: language.name,
-  }));
+  const options = [{value: 'HIN', label: 'HINDI'}, {value: 'FRE', label: 'FRENCH'}, {value: 'CHI', label: 'CHINESE'}, {value: 'KOR', label: 'KOREAN'}];
 
   const handleChange = (selectedOption) => {
-    setValue(selectedOption);
+    setSelectedLanguage(selectedOption);
   };
 
   return (
