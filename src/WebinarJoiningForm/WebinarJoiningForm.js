@@ -73,6 +73,7 @@ export const WebinarJoiningForm = () => {
           ></Form.Control>
           <Select
             className="options"
+            placeholder="Select Role..."
             options={options}
             onChange={(selectedOption) =>
               handleRoleChange(selectedOption, "role")
@@ -93,6 +94,7 @@ export const WebinarJoiningForm = () => {
               />
               <Select
                 className="options"
+                placeholder="Select Source Language..."
                 options={sourcelanguageOptions}
                 onChange={(selectedOption) =>
                   handleRoleChange(selectedOption, "source")

@@ -4,11 +4,18 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ### Prerequisites - Install the Following Packages
 
-##### `npm install react-use-websocket`
-##### `npm install file-saver`
-##### `npm install recordrtc --legacy-peer-deps`
-##### `npm install react-audio-visualize`
+Run this command to install all the required dependencies
+##### `npm install`
 
+If you are facing any error while install the any package you can install that package separately by appending the --legacy-peer-deps ath the end 
+e.g.
+##### `npm install recordrtc --legacy-peer-deps`
+
+
+### Set up and test the application:
+To implement the Vonage Video API in ReactJS, the first step is to create a new project for our application from the Vonage Dashboard in order to obtain the API key and secret. These credentials are necessary to authenticate requests to the Vonage API.
+
+Create a sessionID from the dashboard and then create the publisher and subscribers token by choosing the role from the dropdown. Enter your credentials in `config.js` and the application will work.
 
 ## Available Scripts
 
@@ -22,18 +29,8 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
+Open the sample in two tabs or windows and fill out the form details. You need to assign the role of 'host' to one user and 'guest' to another. When selecting 'host' as the role, additional fields will appear. Ensure to select the required source language. After joining the webinar as a host, click the 'Start Webinar' button. A new button labeled 'Start Publishing' will then appear. Before clicking on that button, ensure that the webinar has started properly and your websocket connection is established.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+On the other hand, you need to join as a guest. After joining, click the 'Join Webinar' button. You will then see the publisher's video on the guest's end. There is a language selector for subscribers/guests; they can switch the language and will hear the audio in the selected language.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
