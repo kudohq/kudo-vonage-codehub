@@ -4,7 +4,9 @@ import { API_KEY, SESSION_ID, P_TOKEN, S_TOKEN } from "../config";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 let apiKey = API_KEY;
 let sessionId = SESSION_ID;
-let session, subscriber, publisher1, publisher2, panner;
+let session, subscriber, panner;
+let publisher = [];
+const predefinedTargetLanguge = ['HIN', 'FRE', 'CHI', 'KOR'];
 
 function handleError(error) {
   if (error) {
@@ -16,7 +18,9 @@ export function initializeSession(
   setChunk,
   recorderRef,
   isHost,
-  SelectedLanguage
+  SelectedLanguage,
+  streams,
+  setStreams
 ) {
   let token = isHost ? P_TOKEN : S_TOKEN;
   if (session && session.isConnected()) {
@@ -62,8 +66,9 @@ export function initializeSession(
       width: "100%",
       height: "100%",
     };
+    setStreams(prevStreams => [...prevStreams, event.stream]);
     if (SelectedLanguage === event.stream.name) {
-      session.subscribe(
+      subscriber = session.subscribe(
         event.stream,
         "subscriber",
         subscriberOptions,
@@ -80,19 +85,22 @@ export function initializeSession(
 
 export function stopStreaming() {
   if (session) {
-    session.unpublish(publisher1);
-    session.unpublish(publisher2);
+    publisher.forEach(pub => {
+      session.unpublish(pub);
+    });
   }
 }
 
 // The following functions are used in functionality customization
 export function toggleVideo(state) {
-  publisher1.publishVideo(state);
-  publisher2.publishVideo(state);
+  publisher.forEach(pub => {
+    pub.publishVideo(state);
+  });
 }
 export function toggleAudio(state) {
-  publisher1.publishAudio(state);
-  publisher2.publishAudio(state);
+  publisher.forEach(pub => {
+    pub.publishAudio(state);
+  });
 }
 export function toggleAudioSubscribtion(state) {
   subscriber.subscribeToAudio(state);
@@ -102,8 +110,31 @@ export function toggleVideoSubscribtion(state) {
 }
 
 export function togglePublisherDestroy(state) {
-  publisher1.disconnect();
-  publisher2.disconnect();
+  publisher.forEach(pub => {
+    pub.disconnect();
+  });
+}
+
+export function reSubscribeStreams(streams, userTargetLanguage) {
+  session.unsubscribe(subscriber);
+  console.log("Session unsubscribed");
+
+  for (let i = 0; i < streams.length; i++) {
+    if(streams[i].name === userTargetLanguage){
+      console.log("Session resubscribed with language", streams[i].name);
+      subscriber = session.subscribe(
+        streams[i],
+        "subscriber",
+        {
+          insertMode: "append",
+          width: "100%",
+          height: "100%",
+        },
+        handleError
+      );
+    }
+
+  }
 }
 
 function getAudioBuffer(buffer, audioContext) {
@@ -133,7 +164,7 @@ function createAudioStream(audioBuffer, audioContext) {
   };
 }
 
-export function publish(translatedBuffer, targetLanguage) {
+export function publish(translatedBuffer, websocketTargetLanguage, userTargetLanguage) {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   // Create audio stream from mp3 file and video stream from webcam
   Promise.all([
@@ -147,67 +178,45 @@ export function publish(translatedBuffer, targetLanguage) {
         audioContext
       );
 
-      // initialize the publisher
-      if (!publisher1) {
-        const publisherOptions = {
-          insertMode: "append",
-          width: "100%",
-          height: "100%",
-          // Pass in the generated audio track as our custom audioSource
-          audioSource: audioStream ? audioStream.getAudioTracks()[0] : null,
-          // Enable stereo audio
-          enableStereo: true,
-          // Increasing audio bitrate is recommended for stereo music
-          audioBitrate: 128000,
-          name: "HIN",
-        };
-        console.log("publisher 1 if");
-        publisher1 = OT.initPublisher(
-          "publisher",
-          publisherOptions,
-          (error) => {
-            if (error) {
-              handleError(error);
-            } else {
-              // If the connection is successful, publish the publisher1 to the session
-              session.publish(publisher1, (error) => {
-                if (error) {
-                  handleError(error);
-                }
-              });
+      for (let i = 0; i < predefinedTargetLanguge.length; i++) {
+        if (!publisher[i]) {
+          const publisherOptions = {
+            insertMode: "append",
+            width: "100%",
+            height: "100%",
+            // Pass in the generated audio track as our custom audioSource
+            audioSource: audioStream ? audioStream.getAudioTracks()[0] : null,
+            // Enable stereo audio
+            enableStereo: true,
+            // Increasing audio bitrate is recommended for stereo music
+            audioBitrate: 128000,
+            name: predefinedTargetLanguge[i],
+          };
+
+          publisher[i] = OT.initPublisher(
+            "publisher",
+            publisherOptions,
+            (error) => {
+              if (error) {
+                handleError(error);
+              } else {
+                // If the connection is successful, publish the publisher1 to the session
+                session.publish(publisher[i], (error) => {
+                  if (error) {
+                    handleError(error);
+                  }
+                });
+              }
             }
+          );
+        } else {
+          console.log("Publishing the audio....");
+          // If publisher1 is already initialized, update the audio source
+          if (websocketTargetLanguage === predefinedTargetLanguge[i]) {
+            publisher[i].publishAudio(false); // Stop publishing audio temporarily
+            publisher[i].setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
+            publisher[i].publishAudio(true); // Start publishing audio again
           }
-        );
-        publisher2 = OT.initPublisher(
-          "publisher",
-          { ...publisherOptions, name: "CHI" },
-          (error) => {
-            if (error) {
-              handleError(error);
-            } else {
-              // If the connection is successful, publish the publisher1 to the session
-              session.publish(publisher2, (error) => {
-                if (error) {
-                  handleError(error);
-                }
-              });
-            }
-          }
-        );
-      } else {
-        console.log("elseelseelselelse");
-        // If publisher1 is already initialized, update the audio source
-        if (targetLanguage === "HIN") {
-          console.log("publisher 1 else");
-          publisher1.publishAudio(false); // Stop publishing audio temporarily
-          publisher1.setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
-          publisher1.publishAudio(true); // Start publishing audio again
-        }
-        // If publisher2 is already initialized, update the audio source
-        if (targetLanguage === "CHI") {
-          publisher2.publishAudio(false); // Stop publishing audio temporarily
-          publisher2.setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
-          publisher2.publishAudio(true); // Start publishing audio again
         }
       }
 

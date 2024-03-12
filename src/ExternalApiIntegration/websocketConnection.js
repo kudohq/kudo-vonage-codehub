@@ -12,6 +12,7 @@ export const WebsocketConnection = ({
   resourceId,
   setTranslatedBuffer,
   isInterviewStarted,
+  userTargetLanguage,
 }) => {
   // const resourceId = '41d4cbd8-c3fc-45f8-bc24-893e0cba363b';
   // const resourceId = CreateTranslationResource(SelectedLanguage);
@@ -62,7 +63,7 @@ export const WebsocketConnection = ({
       reader.onload = function (event) {
         var audioData = event.target.result;
 
-        publish(audioData, data.targetLanguage);
+        publish(audioData, data.targetLanguage, userTargetLanguage);
       };
       reader.readAsArrayBuffer(audioBlob);
       setIndex((prevIndex) => prevIndex + 1); // Increment index by 1

@@ -18,6 +18,7 @@ import {
   initializeSession,
   stopStreaming,
   publish,
+  reSubscribeStreams
 } from "./ExternalApiIntegration/VideoApiIntegration";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
@@ -38,15 +39,17 @@ function VideoComponent() {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({value: 'HIN', label: 'HINDI'});
+  const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
   const [resourceId, setResourceId] = useState(null);
   const [index, setIndex] = useState(0);
+  const languageRef = useRef(false);
   const recorderRef = useRef(null);
 
   const isHost = state.role === "Host";
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, recorderRef, isHost, SelectedLanguage.value);
+      initializeSession(setChunk, recorderRef, isHost, SelectedLanguage.value,streams, setStreams);
     } else {
       stopStreaming();
 
@@ -57,11 +60,12 @@ function VideoComponent() {
   }, [isInterviewStarted]);
 
   useEffect(() => {
-    if (translatedBuffer) {
-      publish(translatedBuffer[index]);
-      setIndex((prevIndex) => prevIndex + 1);
+    if(languageRef.current){
+      reSubscribeStreams(streams, SelectedLanguage.value);
+    }else {
+      languageRef.current  = true;
     }
-  }, [translatedBuffer]);
+  }, [SelectedLanguage]);
 
   useEffect(() => {
     if(isHost){
@@ -236,6 +240,7 @@ function VideoComponent() {
           setTranslatedBuffer={setTranslatedBuffer}
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
+          userTargetLanguage={SelectedLanguage.value}
         />
       ) : null}
     </>
