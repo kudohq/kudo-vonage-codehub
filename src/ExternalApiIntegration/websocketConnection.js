@@ -14,9 +14,6 @@ export const WebsocketConnection = ({
   isInterviewStarted,
   userTargetLanguage,
 }) => {
-  // const resourceId = '41d4cbd8-c3fc-45f8-bc24-893e0cba363b';
-  // const resourceId = CreateTranslationResource(SelectedLanguage);
-
   const SERVER_URL =
   `wss://external-api-staging.meetkudo.com/api/v1/translate?id=${resourceId}`;
   const API_TOKEN = AUTH_TOKEN;
@@ -35,7 +32,8 @@ export const WebsocketConnection = ({
     var BASE64_MARKER = ";base64,";
     var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
     var base64 = dataURI.substring(base64Index);
-    var raw = window.atob(base64);
+    // var raw = window.atob(base64);
+    var raw = window.atob(base64.replace(/-/g, "+").replace(/_/g, "/"));
     var rawLength = raw.length;
     var array = new Uint8Array(new ArrayBuffer(rawLength));
 

@@ -116,7 +116,9 @@ export function togglePublisherDestroy(state) {
 }
 
 export function reSubscribeStreams(streams, userTargetLanguage) {
-  session.unsubscribe(subscriber);
+  if(subscriber){
+    session.unsubscribe(subscriber);
+  }
   console.log("Session unsubscribed");
 
   for (let i = 0; i < streams.length; i++) {
@@ -181,7 +183,7 @@ export function publish(translatedBuffer, websocketTargetLanguage, userTargetLan
       for (let i = 0; i < predefinedTargetLanguge.length; i++) {
         if (!publisher[i]) {
           const publisherOptions = {
-            insertMode: "append",
+            insertMode: "replace",
             width: "100%",
             height: "100%",
             // Pass in the generated audio track as our custom audioSource
@@ -196,6 +198,7 @@ export function publish(translatedBuffer, websocketTargetLanguage, userTargetLan
           publisher[i] = OT.initPublisher(
             "publisher",
             publisherOptions,
+            // eslint-disable-next-line no-loop-func
             (error) => {
               if (error) {
                 handleError(error);
