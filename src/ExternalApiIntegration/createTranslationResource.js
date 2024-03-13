@@ -2,7 +2,6 @@ import { baseService } from "./baseService";
 import { AUTH_TOKEN } from "../config";
 
 const createTranslationResource = async (targetLanguage, sourceLanguage) => {
-  console.log("targetLanguage", targetLanguage, sourceLanguage);
   const requestData = {
     clientId: 'kudo-staging-payments-auth-client',
     sourceLanguages:[`${sourceLanguage}`],

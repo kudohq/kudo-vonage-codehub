@@ -10,7 +10,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Tooltip, Button } from "@mui/material";
 import logo from "./Group.png";
 import {
-  toggleAudio,  
+  toggleAudio,
   toggleVideo,
   toggleAudioSubscribtion,
   toggleVideoSubscribtion,
@@ -18,19 +18,21 @@ import {
   initializeSession,
   stopStreaming,
   publish,
-  reSubscribeStreams
+  reSubscribeStreams,
 } from "./ExternalApiIntegration/VideoApiIntegration";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
 import { useLocation } from "react-router-dom";
-import createVonageApiTokens from './ExternalApiIntegration/createVonageApiTokens';
-import CreateTranslationResource from './ExternalApiIntegration/createTranslationResource'
+import { ToastContainer, toast } from "react-toastify";
+import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens";
+import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource";
 import "./VideoChatComponent.scss";
+import 'react-toastify/dist/ReactToastify.css';
 
 function VideoComponent() {
   const location = useLocation();
   const state = location.state.form;
-  const predefinedTargetLanguge = state.target.map(x => x.value);
+  const predefinedTargetLanguge = state.target.map((x) => x.value);
   const language = location.state.language;
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
@@ -39,7 +41,10 @@ function VideoComponent() {
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
-  const [SelectedLanguage, setSelectedLanguage] = useState({value: 'HIN', label: 'HINDI'});
+  const [SelectedLanguage, setSelectedLanguage] = useState({
+    value: "HIN",
+    label: "HINDI",
+  });
   const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
   const [opentokApiToken, setOpentokApiToken] = useState(null);
@@ -47,11 +52,22 @@ function VideoComponent() {
   const [index, setIndex] = useState(0);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
+  const JoiningLink = opentokApiToken
+    ? `http://localhost:3001/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
+    : null;
 
   const isHost = state.role === "Host";
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(opentokApiToken, setChunk, recorderRef, isHost, SelectedLanguage.value,streams, setStreams);
+      initializeSession(
+        opentokApiToken,
+        setChunk,
+        recorderRef,
+        isHost,
+        SelectedLanguage.value,
+        streams,
+        setStreams
+      );
     } else {
       stopStreaming();
 
@@ -62,25 +78,34 @@ function VideoComponent() {
   }, [isInterviewStarted]);
 
   useEffect(() => {
-    if(languageRef.current){
+    if (languageRef.current) {
       reSubscribeStreams(streams, SelectedLanguage.value);
-    }else {
-      languageRef.current  = true;
+    } else {
+      languageRef.current = true;
     }
   }, [SelectedLanguage]);
 
   useEffect(() => {
-    if(isHost){
+    if (isHost) {
       CreateTranslationResource(predefinedTargetLanguge, state.source)
-      .then((id) => setResourceId(id))
-      .catch((error) => console.error("Error creating translation resource:", error));
+        .then((id) => setResourceId(id))
+        .catch((error) =>
+          console.error("Error creating translation resource:", error)
+        );
 
       createVonageApiTokens()
-      .then((tokens) =>   setOpentokApiToken(tokens))
-      .catch((error) => console.error("Error creating translation resource:", error));
-
+        .then((tokens) => setOpentokApiToken(tokens))
+        .catch((error) =>
+          console.error("Error creating translation resource:", error)
+        );
     }
   }, []);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(JoiningLink);
+    toast.success("Copied to Clipboard");
+  };
+
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
     toggleAudio(action);
@@ -176,7 +201,9 @@ function VideoComponent() {
                   </>
                 )}
               </div>
-            ) : <LanguageSelector setSelectedLanguage={setSelectedLanguage} />}
+            ) : (
+              <LanguageSelector setSelectedLanguage={setSelectedLanguage} />
+            )}
           </div>
         )}
       </>
@@ -220,29 +247,36 @@ function VideoComponent() {
           </Button>
         ) : null}
       </div>
-      <div className="video-container">
-        { isHost ? (
+      <div className="joinLink">
+        {opentokApiToken ? (
           <>
-          <div
-            id="publisher"
-            className={`${
-              isStreamSubscribed ? "additional-video" : "main-video"
-            }`}
-          >
-            {!isStreamSubscribed && renderToolbar()}
-          </div>
-        </>
+            <p>Users can join the webinar using this link: </p>
+            <button className="copyButton" onClick={handleCopyLink}>
+              Copy Joining Link
+            </button>
+            <ToastContainer />
+          </>
+        ) : null}
+      </div>
+      <div className="video-container">
+        {isHost ? (
+          <>
+            <div
+              id="publisher"
+              className={`${
+                isStreamSubscribed ? "additional-video" : "main-video"
+              }`}
+            >
+              {!isStreamSubscribed && renderToolbar()}
+            </div>
+          </>
         ) : (
           <>
-          <div
-            id="subscriber"
-            className="main-video"
-          >
-            {!isStreamSubscribed && renderToolbar()}
-          </div>
-        </>
-        )
-        }
+            <div id="subscriber" className="main-video">
+              {!isStreamSubscribed && renderToolbar()}
+            </div>
+          </>
+        )}
       </div>
 
       {chunk && resourceId ? (

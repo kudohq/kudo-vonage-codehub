@@ -100,3 +100,16 @@
     margin-top: 10px;
   }
 }
+
+.joinLink{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.copyButton {
+    height: 30px;
+    font-size: 12px;
+    border: 1px solid black;
+}

@@ -13,7 +13,7 @@ export const LanguageSelector = ({setSelectedLanguage}) => {
   return (
     <div className="languageSelector">
       <div className="m-auto text-light">
-        <Select className="options" options={options} onChange={handleChange} />
+        <Select placeholder="Change langauge..." className="options" options={options} onChange={handleChange} />
       </div>
     </div>
   );
