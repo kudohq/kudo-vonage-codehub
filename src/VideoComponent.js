@@ -217,14 +217,6 @@ function VideoComponent() {
       <div className="video-container">
         { isHost ? (
           <>
-            <div
-            id="subscriber"
-            className={`${
-              isStreamSubscribed ? "main-video" : "additional-video"
-            }`}
-          >
-            {isStreamSubscribed && renderToolbar()}
-          </div>
           <div
             id="publisher"
             className={`${
@@ -236,16 +228,11 @@ function VideoComponent() {
         </>
         ) : (
           <>
-            <div
+          <div
             id="subscriber"
             className="main-video"
           >
             {!isStreamSubscribed && renderToolbar()}
-          </div>
-          <div
-            id="publisher"
-            className="additional-video"
-          >
           </div>
         </>
         )

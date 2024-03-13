@@ -183,7 +183,7 @@ export function publish(translatedBuffer, websocketTargetLanguage, userTargetLan
       for (let i = 0; i < predefinedTargetLanguge.length; i++) {
         if (!publisher[i]) {
           const publisherOptions = {
-            insertMode: "replace",
+            insertMode: "append",
             width: "100%",
             height: "100%",
             // Pass in the generated audio track as our custom audioSource
