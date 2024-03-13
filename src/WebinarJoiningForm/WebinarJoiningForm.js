@@ -18,8 +18,7 @@ export const WebinarJoiningForm = () => {
     role: "",
   });
   const options = [
-    { value: "Host", label: "Host" },
-    { value: "Guest", label: "Guest" },
+    { value: "Host", label: "Host" }
   ];
 
   const targetlanguageOptions = targetLanguages.map((language) => ({
@@ -108,7 +107,7 @@ export const WebinarJoiningForm = () => {
             type="submit"
             onClick={submitButton}
           >
-            Join Webinar
+            Start Webinar
           </Button>
         </Form.Group>
       </Form>
