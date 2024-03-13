@@ -23,6 +23,7 @@ import {
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
 import { useLocation } from "react-router-dom";
+import createVonageApiTokens from './ExternalApiIntegration/createVonageApiTokens';
 import CreateTranslationResource from './ExternalApiIntegration/createTranslationResource'
 import "./VideoChatComponent.scss";
 
@@ -41,6 +42,7 @@ function VideoComponent() {
   const [SelectedLanguage, setSelectedLanguage] = useState({value: 'HIN', label: 'HINDI'});
   const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
+  const [opentokApiToken, setOpentokApiToken] = useState(null);
   const [resourceId, setResourceId] = useState(null);
   const [index, setIndex] = useState(0);
   const languageRef = useRef(false);
@@ -49,7 +51,7 @@ function VideoComponent() {
   const isHost = state.role === "Host";
   useEffect(() => {
     if (isInterviewStarted) {
-      initializeSession(setChunk, recorderRef, isHost, SelectedLanguage.value,streams, setStreams);
+      initializeSession(opentokApiToken, setChunk, recorderRef, isHost, SelectedLanguage.value,streams, setStreams);
     } else {
       stopStreaming();
 
@@ -72,9 +74,13 @@ function VideoComponent() {
       CreateTranslationResource(predefinedTargetLanguge, state.source)
       .then((id) => setResourceId(id))
       .catch((error) => console.error("Error creating translation resource:", error));
+
+      createVonageApiTokens()
+      .then((tokens) =>   setOpentokApiToken(tokens))
+      .catch((error) => console.error("Error creating translation resource:", error));
+
     }
   }, []);
-
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
     toggleAudio(action);

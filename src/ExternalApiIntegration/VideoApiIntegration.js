@@ -1,9 +1,7 @@
 import OT from "@opentok/client";
-
-import { API_KEY, SESSION_ID, P_TOKEN, S_TOKEN } from "../config";
+import { API_KEY } from "../config";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 let apiKey = API_KEY;
-let sessionId = SESSION_ID;
 let session, subscriber, panner;
 let publisher = [];
 const predefinedTargetLanguge = ['HIN', 'FRE', 'CHI', 'KOR'];
@@ -15,6 +13,7 @@ function handleError(error) {
 }
 
 export function initializeSession(
+  opentokApiToken,
   setChunk,
   recorderRef,
   isHost,
@@ -22,13 +21,14 @@ export function initializeSession(
   streams,
   setStreams
 ) {
-  let token = isHost ? P_TOKEN : S_TOKEN;
+  let token = isHost ? opentokApiToken.publisher_token : opentokApiToken.subscriber_token;
+
   if (session && session.isConnected()) {
     session.disconnect();
   }
 
   if (!session) {
-    session = OT.initSession(apiKey, sessionId);
+    session = OT.initSession(apiKey, opentokApiToken.session_id);
   }
 
   // Connect to the session
