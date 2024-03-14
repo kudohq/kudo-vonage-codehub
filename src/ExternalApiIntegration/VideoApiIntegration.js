@@ -19,7 +19,8 @@ export function initializeSession(
   isHost,
   SelectedLanguage,
   streams,
-  setStreams
+  setStreams,
+  setIsSessionConnected
 ) {
   let token = isHost ? opentokApiToken.publisher_token : opentokApiToken.subscriber_token;
 
@@ -34,6 +35,7 @@ export function initializeSession(
   // Connect to the session
   session.connect(token, function (error) {
     // If the connection is successful, publish to the session
+    setIsSessionConnected(true);
     if (error) {
       handleError(error);
     } else {

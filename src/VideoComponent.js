@@ -39,6 +39,7 @@ export const VideoComponent = () => {
   const [isAudioSubscribed, setIsAudioSubscribed] = useState(true);
   const [isVideoSubscribed, setIsVideoSubscribed] = useState(true);
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
+  const [isSessionConnected, setIsSessionConnected] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({
     value: "HIN",
@@ -64,7 +65,8 @@ export const VideoComponent = () => {
         isHost,
         SelectedLanguage.value,
         streams,
-        setStreams
+        setStreams,
+        setIsSessionConnected
       );
     } else {
       stopStreaming();
@@ -217,7 +219,7 @@ export const VideoComponent = () => {
         </div>
       </div>
       <div className="actions-btns">
-        {isHost && isInterviewStarted ? (
+        {isHost && isInterviewStarted && isSessionConnected ? (
           <Button
             onClick={() => publish(translatedBuffer)}
             color="primary"
@@ -246,7 +248,7 @@ export const VideoComponent = () => {
         ) : null}
       </div>
       <div className="joinLink">
-        {opentokApiToken && isInterviewStarted ? (
+        {opentokApiToken && isInterviewStarted && isSessionConnected ? (
           <>
             <p>Users can join the webinar using this link: </p>
             <button className="copyButton" onClick={handleCopyLink}>
