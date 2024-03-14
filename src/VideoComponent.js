@@ -29,11 +29,10 @@ import CreateTranslationResource from "./ExternalApiIntegration/createTranslatio
 import "./VideoChatComponent.scss";
 import 'react-toastify/dist/ReactToastify.css';
 
-function VideoComponent() {
+export const VideoComponent = () => {
   const location = useLocation();
   const state = location.state.form;
   const predefinedTargetLanguge = state.target.map((x) => x.value);
-  const language = location.state.language;
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -49,7 +48,6 @@ function VideoComponent() {
   const [chunk, setChunk] = useState(null);
   const [opentokApiToken, setOpentokApiToken] = useState(null);
   const [resourceId, setResourceId] = useState(null);
-  const [index, setIndex] = useState(0);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
   const JoiningLink = opentokApiToken
@@ -248,7 +246,7 @@ function VideoComponent() {
         ) : null}
       </div>
       <div className="joinLink">
-        {opentokApiToken ? (
+        {opentokApiToken && isInterviewStarted ? (
           <>
             <p>Users can join the webinar using this link: </p>
             <button className="copyButton" onClick={handleCopyLink}>
@@ -292,5 +290,3 @@ function VideoComponent() {
     </>
   );
 }
-
-export default VideoComponent;

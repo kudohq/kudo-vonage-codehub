@@ -3,16 +3,16 @@ import { AUTH_TOKEN } from "../config";
 
 const createTranslationResource = async (targetLanguage, sourceLanguage) => {
   const requestData = {
-    clientId: 'kudo-staging-payments-auth-client',
-    sourceLanguages:[`${sourceLanguage}`],
+    clientId: "kudo-staging-payments-auth-client",
+    sourceLanguages: [`${sourceLanguage}`],
     targetLanguages: targetLanguage,
-    voiceGender: "female"
+    voiceGender: "female",
   };
 
   try {
     const response = await baseService.post(
       "https://external-api-staging.meetkudo.com/api/v1/translation_resource",
-       JSON.stringify(requestData),
+      JSON.stringify(requestData),
       {
         headers: {
           "Content-Type": "application/json",

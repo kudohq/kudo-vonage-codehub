@@ -8,7 +8,7 @@ import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
 import { useLocation } from "react-router-dom";
 import "./VideoChatComponent.scss";
 
-function HostVideoComponent() {
+export const JoiningVideoComponent = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const sessionId = searchParams.get('sessionId');
@@ -61,5 +61,3 @@ function HostVideoComponent() {
     </>
   );
 }
-
-export default HostVideoComponent;

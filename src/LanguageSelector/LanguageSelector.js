@@ -2,9 +2,13 @@ import React from "react";
 import "./LanguageSelector.scss";
 import Select from "react-select";
 
-export const LanguageSelector = ({setSelectedLanguage}) => {
-
-  const options = [{value: 'HIN', label: 'HINDI'}, {value: 'FRE', label: 'FRENCH'}, {value: 'CHI', label: 'CHINESE'}, {value: 'KOR', label: 'KOREAN'}];
+export const LanguageSelector = ({ setSelectedLanguage }) => {
+  const options = [
+    { value: "HIN", label: "HINDI" },
+    { value: "FRE", label: "FRENCH" },
+    { value: "CHI", label: "CHINESE" },
+    { value: "KOR", label: "KOREAN" },
+  ];
 
   const handleChange = (selectedOption) => {
     setSelectedLanguage(selectedOption);
@@ -13,7 +17,12 @@ export const LanguageSelector = ({setSelectedLanguage}) => {
   return (
     <div className="languageSelector">
       <div className="m-auto text-light">
-        <Select placeholder="Change langauge..." className="options" options={options} onChange={handleChange} />
+        <Select
+          placeholder="Change langauge..."
+          className="options"
+          options={options}
+          onChange={handleChange}
+        />
       </div>
     </div>
   );

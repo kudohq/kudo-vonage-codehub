@@ -13,13 +13,16 @@ export const WebinarJoiningForm = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    target: [{value: 'HIN', label: 'HINDI'}, {value: 'FRE', label: 'FRENCH'}, {value: 'CHI', label: 'CHINESE'}, {value: 'KOR', label: 'KOREAN'}],
+    target: [
+      { value: "HIN", label: "HINDI" },
+      { value: "FRE", label: "FRENCH" },
+      { value: "CHI", label: "CHINESE" },
+      { value: "KOR", label: "KOREAN" },
+    ],
     source: "",
     role: "",
   });
-  const options = [
-    { value: "Host", label: "Host" }
-  ];
+  const options = [{ value: "Host", label: "Host" }];
 
   const targetlanguageOptions = targetLanguages.map((language) => ({
     value: language.code,
@@ -49,8 +52,8 @@ export const WebinarJoiningForm = () => {
   };
 
   const handleTargetChange = (e, field) => {
-    setForm({ ...form, "target": e });
-  }
+    setForm({ ...form, target: e });
+  };
 
   return (
     <div className="Formcontainer">

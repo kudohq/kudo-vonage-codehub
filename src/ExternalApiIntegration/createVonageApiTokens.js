@@ -1,14 +1,14 @@
 import { baseService } from "./baseService";
 
 const createVonageApiTokens = async () => {
-
   try {
     const response = await baseService.post(
-      "http://localhost:3002/api/v1/external_api/sessions", { },
+      "http://localhost:3002/api/v1/external_api/sessions",
+      {},
       {
         headers: {
           "Content-Type": "application/json",
-          "HTTP-X-API-TOKEN": 'daceac4f6a07265eef17857c',
+          "HTTP-X-API-TOKEN": "daceac4f6a07265eef17857c",
         },
       }
     );
