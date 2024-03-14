@@ -27,7 +27,7 @@ import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource";
 import "./VideoChatComponent.scss";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 export const VideoComponent = () => {
   const location = useLocation();
@@ -247,17 +247,17 @@ export const VideoComponent = () => {
           </Button>
         ) : null}
       </div>
-      <div className="joinLink">
-        {opentokApiToken && isInterviewStarted && isSessionConnected ? (
-          <>
+      {opentokApiToken && isInterviewStarted && isSessionConnected ? (
+        <>
+          <div className="joinLink">
             <p>Users can join the webinar using this link: </p>
             <button className="copyButton" onClick={handleCopyLink}>
               Copy Joining Link
             </button>
             <ToastContainer />
-          </>
-        ) : null}
-      </div>
+          </div>
+        </>
+      ) : null}
       <div className="video-container">
         {isHost ? (
           <>
@@ -279,6 +279,16 @@ export const VideoComponent = () => {
         )}
       </div>
 
+      <div className="mt-3 joinLink">
+        <p> Webinar will be available in the following languages: </p>
+        <ul>
+        <li>HINDI</li>
+        <li>FRENCH</li>
+        <li>CHINESE</li>
+        <li>KOREAN</li>
+      </ul>
+      </div>
+
       {chunk && resourceId ? (
         <WebsocketConnection
           dataBlobUrl={chunk}
@@ -291,4 +301,4 @@ export const VideoComponent = () => {
       ) : null}
     </>
   );
-}
+};

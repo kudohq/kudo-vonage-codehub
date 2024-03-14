@@ -12,7 +12,6 @@ export const WebinarJoiningForm = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
-    email: "",
     target: [
       { value: "HIN", label: "HINDI" },
       { value: "FRE", label: "FRENCH" },
@@ -62,15 +61,8 @@ export const WebinarJoiningForm = () => {
           <Form.Control
             className="name-input"
             type="text"
-            placeholder="name"
+            placeholder="Name"
             name="name"
-            onChange={handleChange}
-          ></Form.Control>
-          <Form.Control
-            className="email-input"
-            type="text"
-            placeholder="email"
-            name="email"
             onChange={handleChange}
           ></Form.Control>
           <Select
