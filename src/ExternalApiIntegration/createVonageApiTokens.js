@@ -3,7 +3,7 @@ import { baseService } from "./baseService";
 const createVonageApiTokens = async () => {
   try {
     const response = await baseService.post(
-      "http://localhost:3002/api/v1/external_api/sessions",
+      "https://marketplaceapi-staging.meetkudo.com/api/v1/external_api/sessions",
       {},
       {
         headers: {
