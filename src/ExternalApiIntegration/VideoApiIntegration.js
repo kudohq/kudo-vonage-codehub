@@ -4,7 +4,7 @@ import RecordRTC, { StereoAudioRecorder } from "recordrtc";
 let apiKey = API_KEY;
 let session, subscriber, panner;
 let publisher = [];
-const predefinedTargetLanguge = ['HIN', 'FRE', 'CHI', 'KOR'];
+const predefinedTargetLanguge = ['HIN', 'FRE', 'CHI', 'KOR', 'ITA', 'GRK', 'JPN'];
 
 function handleError(error) {
   if (error) {
@@ -224,17 +224,6 @@ export function publish(translatedBuffer, websocketTargetLanguage, userTargetLan
           }
         }
       }
-
-      // publisher1.on("destroyed", () => {
-      //   // When the publisher is destroyed we cleanup
-      //   stop();
-      //   audioContext.close();
-      // });
-      // publisher2.on("destroyed", () => {
-      //   // When the publisher is destroyed we cleanup
-      //   stop();
-      //   audioContext.close();
-      // });
     })
     .catch((error) => {
       audioContext.close();

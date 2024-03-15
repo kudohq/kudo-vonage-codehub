@@ -8,6 +8,9 @@ export const LanguageSelector = ({ setSelectedLanguage }) => {
     { value: "FRE", label: "FRENCH" },
     { value: "CHI", label: "CHINESE" },
     { value: "KOR", label: "KOREAN" },
+    { value: "ITA", label: "ITALIAN" },
+    { value: "GRK", label: "GREEK" },
+    { value: "JPN", label: "JAPANESE" },
   ];
 
   const handleChange = (selectedOption) => {
