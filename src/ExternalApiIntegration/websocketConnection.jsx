@@ -1,9 +1,9 @@
 // Ensure you have installed the following React packages: react-use-websocket and file-saver
 import useWebSocket from "react-use-websocket";
 import { useCallback, useEffect } from "react";
-import { AUTH_TOKEN } from "../config";
+import { AUTH_TOKEN } from "../config.js";
 
-import { publish } from "./VideoApiIntegration";
+import { publish } from "./VideoApiIntegration.js";
 
 export const WebsocketConnection = ({
   dataBlobUrl,

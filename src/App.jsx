@@ -1,6 +1,6 @@
-import { VideoComponent } from "./VideoComponent";
-import { JoiningVideoComponent } from "./JoiningVideoComponent";
-import { WebinarJoiningForm } from "./WebinarJoiningForm/WebinarJoiningForm";
+import { VideoComponent } from "./VideoComponent.jsx";
+import { JoiningVideoComponent } from "./JoiningVideoComponent.jsx";
+import { WebinarJoiningForm } from "./WebinarJoiningForm/WebinarJoiningForm.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 

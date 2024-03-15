@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import VideocamOffIcon from "@mui/icons-material/VideocamOff";
+import MicIcon from "@mui/icons-material/Mic.js";
+import MicOffIcon from "@mui/icons-material/MicOff.js";
+import VideocamIcon from "@mui/icons-material/Videocam.js";
+import VideocamOffIcon from "@mui/icons-material/VideocamOff.js";
 import { Tooltip, Button } from "@mui/material";
 import logo from "./Group.png";
 import {
@@ -13,12 +13,12 @@ import {
   stopStreaming,
   publish,
   reSubscribeStreams,
-} from "./ExternalApiIntegration/VideoApiIntegration";
+} from "./ExternalApiIntegration/VideoApiIntegration.js";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
 import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens";
-import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource";
+import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
+import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
