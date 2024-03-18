@@ -3,8 +3,8 @@ import logo from "./Group.png";
 import {
   initializeSession,
   reSubscribeStreams,
-} from "./ExternalApiIntegration/VideoApiIntegration";
-import { LanguageSelector } from "./LanguageSelector/LanguageSelector";
+} from "./ExternalApiIntegration/VideoApiIntegration.js";
+import { LanguageSelector } from "./LanguageSelector/LanguageSelector.js";
 import { useLocation } from "react-router-dom";
 import { Button } from "@mui/material";
 import "./VideoChatComponent.scss";

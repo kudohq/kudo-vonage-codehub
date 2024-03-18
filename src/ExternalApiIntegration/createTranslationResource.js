@@ -1,5 +1,5 @@
-import { baseService } from "./baseService";
-import { AUTH_TOKEN } from "../config";
+import { baseService } from "./baseService.js";
+import { AUTH_TOKEN } from "../config.js";
 
 const createTranslationResource = async (targetLanguage, sourceLanguage) => {
   const requestData = {

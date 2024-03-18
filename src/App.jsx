@@ -1,6 +1,8 @@
-import { VideoComponent } from "./VideoComponent";
-import { JoiningVideoComponent } from "./JoiningVideoComponent";
-import { WebinarJoiningForm } from "./WebinarJoiningForm/WebinarJoiningForm";
+import { VideoComponent } from "./VideoComponent.jsx";
+import { JoiningVideoComponent } from "./JoiningVideoComponent.jsx";
+import { WebinarJoiningForm } from "./WebinarJoiningForm/WebinarJoiningForm.jsx";
+import { Health } from "./common/Health.jsx";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
 
@@ -11,6 +13,7 @@ function App() {
         <Routes>
           <Route exact path="/" element={<WebinarJoiningForm />}></Route>
           <Route exact path="/webinar" element={<VideoComponent />}></Route>
+          <Route path="/_/health" component={Health}> </Route>
           <Route
             exact
             path="/webinar/guest"
