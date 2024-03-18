@@ -8,8 +8,6 @@ import logo from "./Group.png";
 import {
   toggleAudio,
   toggleVideo,
-  toggleAudioSubscribtion,
-  toggleVideoSubscribtion,
   togglePublisherDestroy,
   initializeSession,
   stopStreaming,
@@ -118,7 +116,6 @@ export const VideoComponent = () => {
     togglePublisherDestroy();
   };
 
-
   const renderToolbar = () => {
     return (
       <>
@@ -165,7 +162,7 @@ export const VideoComponent = () => {
   };
 
   return (
-    <>
+    <div>
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
@@ -182,23 +179,25 @@ export const VideoComponent = () => {
             Start Publishing
           </Button>
         ) : null}
-        <Button
-          onClick={() => setIsInterviewStarted(true)}
-          disabled={isInterviewStarted}
-          color="primary"
-          variant="contained"
-        >
-          Start Webinar
-        </Button>
-        {isHost ? (
-          <Button
-            onClick={() => onTogglePublisherDestroy(false)}
-            disabled={!isInterviewStarted}
-            color="secondary"
-            variant="contained"
-          >
-            End Webinar
-          </Button>
+        {opentokApiToken ? (
+          <>
+            <Button
+              onClick={() => setIsInterviewStarted(true)}
+              disabled={isInterviewStarted}
+              color="primary"
+              variant="contained"
+            >
+              Start Webinar
+            </Button>
+            <Button
+              onClick={() => onTogglePublisherDestroy(false)}
+              disabled={!isInterviewStarted}
+              color="secondary"
+              variant="contained"
+            >
+              End Webinar
+            </Button>
+          </>
         ) : null}
       </div>
       {opentokApiToken && isInterviewStarted && isSessionConnected ? (
@@ -213,10 +212,7 @@ export const VideoComponent = () => {
         </>
       ) : null}
       <div className="video-container">
-        <div
-          id="publisher"
-          className="main-video"
-        >
+        <div id="publisher" className="main-video">
           {isStreamSubscribed && renderToolbar()}
         </div>
       </div>
@@ -231,6 +227,6 @@ export const VideoComponent = () => {
           userTargetLanguage={SelectedLanguage.value}
         />
       ) : null}
-    </>
+    </div>
   );
 };
