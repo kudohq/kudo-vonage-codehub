@@ -1,10 +1,11 @@
 import OT from "@opentok/client";
 import { API_KEY } from "../config";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
+import { predefinedLanguages } from "../constants/PredefinedLanguages";
 let apiKey = API_KEY;
 let session, subscriber, panner;
 let publisher = [];
-const predefinedTargetLanguge = ['HIN', 'FRE', 'CHI', 'KOR', 'ITA', 'GRK', 'JPN'];
+const predefinedTargetLanguge = predefinedLanguages.map(language => language.value);
 
 function handleError(error) {
   if (error) {
@@ -49,7 +50,7 @@ export function initializeSession(
           type: "audio",
           mimeType: "audio/wav",
           recorderType: StereoAudioRecorder,
-          timeSlice: 1000,
+          timeSlice: 500,
           ondataavailable: function (data) {
             setChunk(data);
           },

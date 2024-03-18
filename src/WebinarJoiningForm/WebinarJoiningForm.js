@@ -5,22 +5,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./WebinarJoiningForm.scss";
 import Select from "react-select";
-import { targetLanguages } from "../constants/targetLanguages";
-import { sourceLanguages } from "../constants/sourceLanguages";
+import { targetLanguages } from "../constants/targetLanguages.js";
+import { sourceLanguages } from "../constants/sourceLanguages.js";
+import { predefinedLanguages } from "../constants/PredefinedLanguages";
 
 export const WebinarJoiningForm = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
-    target: [
-      { value: "HIN", label: "HINDI" },
-      { value: "FRE", label: "FRENCH" },
-      { value: "CHI", label: "CHINESE" },
-      { value: "KOR", label: "KOREAN" },
-      { value: "ITA", label: "ITALIAN" },
-      { value: "GRK", label: "GREEK" },
-      { value: "JPN", label: "JAPANESE" },
-    ],
+    target: predefinedLanguages,
     source: "",
     role: "",
   });
@@ -53,7 +46,7 @@ export const WebinarJoiningForm = () => {
     setForm({ ...form, [field]: selectedOption.value });
   };
 
-  const handleTargetChange = (e, field) => {
+  const handleTargetChange = (e) => {
     setForm({ ...form, target: e });
   };
 
