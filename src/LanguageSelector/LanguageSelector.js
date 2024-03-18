@@ -1,7 +1,7 @@
 import React from "react";
 import "./LanguageSelector.scss";
 import Select from "react-select";
-import { predefinedLanguages } from "../constants/PredefinedLanguages";
+import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 
 export const LanguageSelector = ({ setSelectedLanguage }) => {
 

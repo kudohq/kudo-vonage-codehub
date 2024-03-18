@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./WebinarJoiningForm.scss";
 import Select from "react-select";
 import { sourceLanguages } from "../constants/sourceLanguages.js";
-import { predefinedLanguages } from "../constants/PredefinedLanguages";
+import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 
 export const WebinarJoiningForm = () => {
   const navigate = useNavigate();

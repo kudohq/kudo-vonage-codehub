@@ -1,7 +1,7 @@
 import OT from "@opentok/client";
 import { API_KEY } from "../config.js";
 import RecordRTC, { StereoAudioRecorder } from "recordrtc";
-import { predefinedLanguages } from "../constants/PredefinedLanguages";
+import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 let apiKey = API_KEY;
 let session, subscriber, panner;
 let publisher = [];
