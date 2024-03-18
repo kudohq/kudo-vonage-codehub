@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./WebinarJoiningForm.scss";
 import Select from "react-select";
-import { targetLanguages } from "../constants/targetLanguages.js";
 import { sourceLanguages } from "../constants/sourceLanguages.js";
 import { predefinedLanguages } from "../constants/PredefinedLanguages";
 
@@ -18,11 +17,6 @@ export const WebinarJoiningForm = () => {
     role: "",
   });
   const options = [{ value: "Host", label: "Host" }];
-
-  const targetlanguageOptions = targetLanguages.map((language) => ({
-    value: language.code,
-    label: language.name,
-  }));
 
   const sourcelanguageOptions = sourceLanguages.map((language) => ({
     value: language.code,
@@ -70,28 +64,14 @@ export const WebinarJoiningForm = () => {
             }
             required
           />
-          {form.role && form.role === "Host" ? (
-            <>
-              <Select
-                className="options"
-                value={form.target}
-                options={targetlanguageOptions}
-                onChange={(selectedOption) =>
-                  handleTargetChange(selectedOption)
-                }
-                isMulti
-                isDisabled
-              />
-              <Select
-                className="options"
-                placeholder="Select Source Language..."
-                options={sourcelanguageOptions}
-                onChange={(selectedOption) =>
-                  handleRoleChange(selectedOption, "source")
-                }
-              />
-            </>
-          ) : null}
+          <Select
+            className="options"
+            placeholder="Select Source Language..."
+            options={sourcelanguageOptions}
+            onChange={(selectedOption) =>
+              handleRoleChange(selectedOption, "source")
+            }
+          />
           <Button
             className="submit-button"
             value="submit"
