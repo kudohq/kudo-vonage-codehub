@@ -78,7 +78,7 @@ export const WebinarJoiningForm = () => {
               }
             />
             <Form.Group>
-              <p>Choose the Voice Preferences</p>
+              <p>Voice Preference</p>
               <Form.Check
               className="GenderSelection"
                 type="radio"
