@@ -45,6 +45,8 @@ export const WebinarJoiningForm = () => {
   };
 
   return (
+    <>
+    <h4 className="mt-3 ml-1">Multilingual Webinar powered by KUDO AI</h4>
     <div className="Formcontainer">
       <Form className="signup-form">
         <Form.Group className="formFields">
@@ -83,5 +85,6 @@ export const WebinarJoiningForm = () => {
         </Form.Group>
       </Form>
     </div>
+    </>
   );
 };

@@ -7,10 +7,10 @@ const FetchApiToken = () => {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await baseService.post('https://auth.staging.meetkudo.com/api/sso/v1/oauth2/token',
+        const response = await baseService.post('https://auth.preprod.meetkudo.com/api/sso/v1/oauth2/token',
         {
-          client_id: 'kudo-staging-payments-auth-client',
-          client_secret: 'l/rBtxuW2X6LoPhJl3Uo5DnCCr643e4zE7hCq1lnX+8='
+          client_id: 'kudo-preprod-payments-auth-client',
+          client_secret: 'CqHHVKZOJ843Bb8fxA5Ug0wrUx1sBlM1wO7JLkdz0cQ='
         },
         {
           headers: {

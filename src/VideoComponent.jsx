@@ -169,6 +169,7 @@ export const VideoComponent = () => {
           <h1>Vonage video Api</h1>
         </div>
       </div>
+      <h4 className="mt-3 mb-3">Multilingual Webinar powered by KUDO AI</h4>
       <div className="actions-btns">
         {isHost && isInterviewStarted && isSessionConnected ? (
           <Button

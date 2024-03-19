@@ -89,7 +89,7 @@ export function initializeSession(
 export function stopStreaming() {
   if (session) {
     publisher.forEach(pub => {
-      session.unpublish(pub);
+      session.unpublish(pub); 
     });
   }
 }

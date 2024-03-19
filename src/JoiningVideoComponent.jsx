@@ -58,6 +58,7 @@ export const JoiningVideoComponent = () => {
           <h1>Vonage video Api</h1>
         </div>
       </div>
+      <h4 className="mt-3 mb-3">Multilingual Webinar powered by KUDO AI</h4>
       <div className="actions-btns">
         {isWebinarStarted ? (
           <div className="joinLink">
