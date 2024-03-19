@@ -12,7 +12,9 @@
 
 .Heading{
     margin-top: 4rem;
-    margin-left: 31rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .GenderSelection{

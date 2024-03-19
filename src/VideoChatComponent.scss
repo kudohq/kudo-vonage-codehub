@@ -29,7 +29,9 @@
 
 .AppHeading{
   margin-top: 1rem;
-  margin-left: 31rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .video-container {
