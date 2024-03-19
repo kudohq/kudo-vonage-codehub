@@ -1,29 +1,37 @@
-import { baseService } from "./baseService.js";
+import { useState, useEffect } from 'react';
+import { baseService } from "./baseService";
 
-const FetchApiToken = async () => {
+const FetchApiToken = () => {
+  const [token, setToken] = useState(null);
 
-  try {
-    const response = await baseService.post(
-      "https://auth.preprod.meetkudo.com/api/sso/v1/oauth2/token",
-      {
-        client_id: 'kudo-preprod-payments-auth-client',
-        client_secret: 'CqHHVKZOJ843Bb8fxA5Ug0wrUx1sBlM1wO7JLkdz0cQ='
-      },
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const response = await baseService.post('https://auth.preprod.meetkudo.com/api/sso/v1/oauth2/token',
+        {
+          client_id: 'kudo-preprod-payments-auth-client',
+          client_secret: 'CqHHVKZOJ843Bb8fxA5Ug0wrUx1sBlM1wO7JLkdz0cQ='
         },
-      }
-    );
-    if (!response.data) {
-      throw new Error('Failed to fetch token');
-    }
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+        );
+        if (!response.data) {
+          throw new Error('Failed to fetch token');
+        }
 
-    return response.data.access_token;
-  } catch (error) {
-    console.error("Error creating auth token:", error);
-    return null;
-  }
-};
+        setToken(response.data.access_token);
+      } catch (error) {
+        console.error('Error fetching token:', error);
+      }
+    };
+
+    fetchToken();
+  }, []);
+
+  return token;
+}
 
 export default FetchApiToken;
