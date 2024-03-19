@@ -1,5 +1,5 @@
 export const predefinedLanguages = [
     { value: "HIN", label: "HINDI" },
-    { value: "SPA", label: "SPANISH" },
-    { value: "CHI", label: "CHINESE" },
+    { value: "ARA", label: "ARABIC" },
+    { value: "PER", label: "PERSIAN (FARSI)" },
  ]
