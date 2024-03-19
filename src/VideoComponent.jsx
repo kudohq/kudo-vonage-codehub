@@ -78,7 +78,7 @@ export const VideoComponent = () => {
 
   useEffect(() => {
     if (isHost) {
-      CreateTranslationResource(predefinedTargetLanguge, state.source)
+      CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender)
         .then((id) => setResourceId(id))
         .catch((error) =>
           console.error("Error creating translation resource:", error)
@@ -169,13 +169,14 @@ export const VideoComponent = () => {
           <h1>Vonage video Api</h1>
         </div>
       </div>
-      <h4 className="mt-3 mb-3">Multilingual Webinar powered by KUDO AI</h4>
+      <h4 className="AppHeading">Multilingual Webinar powered by KUDO AI</h4>
       <div className="actions-btns">
         {isHost && isInterviewStarted && isSessionConnected ? (
           <Button
             onClick={handleStartPublishing}
             color="primary"
             variant="contained"
+            disabled={isStreamSubscribed}
           >
             Start Publishing
           </Button>
