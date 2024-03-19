@@ -43,7 +43,7 @@ export const VideoComponent = () => {
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
   const JoiningLink = opentokApiToken
-    ? `https://kudo-vonage-codehub.vercel.app/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
+    ? `https://neru-f4e1ada1-kudo-vonage-multilingual-trans-dev.euw1.runtime.vonage.cloud/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
     : null;
 
   const isHost = state.role === "Host";
