@@ -10,11 +10,14 @@ import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 
 export const WebinarJoiningForm = () => {
   const navigate = useNavigate();
+  const [selectedGender, setSelectedGender] = useState("female");
+
   const [form, setForm] = useState({
     name: "",
     target: predefinedLanguages,
     source: "",
     role: "",
+    gender: selectedGender,
   });
   const options = [{ value: "Host", label: "Host" }];
 
@@ -27,7 +30,7 @@ export const WebinarJoiningForm = () => {
     e.preventDefault();
     navigate("/webinar", {
       state: {
-        form: form,
+        form: {...form, gender: selectedGender},
       },
     });
   };
@@ -40,51 +43,70 @@ export const WebinarJoiningForm = () => {
     setForm({ ...form, [field]: selectedOption.value });
   };
 
-  const handleTargetChange = (e) => {
-    setForm({ ...form, target: e });
+  const handleGenderChange = (event) => {
+    setSelectedGender(event.target.value);
   };
 
   return (
     <>
-    <h4 className="mt-3 ml-1">Multilingual Webinar powered by KUDO AI</h4>
-    <div className="Formcontainer">
-      <Form className="signup-form">
-        <Form.Group className="formFields">
-          <Form.Control
-            className="name-input"
-            type="text"
-            placeholder="Name"
-            name="name"
-            onChange={handleChange}
-          ></Form.Control>
-          <Select
-            className="options"
-            placeholder="Select Role..."
-            options={options}
-            onChange={(selectedOption) =>
-              handleRoleChange(selectedOption, "role")
-            }
-            required
-          />
-          <Select
-            className="options"
-            placeholder="Select Source Language..."
-            options={sourcelanguageOptions}
-            onChange={(selectedOption) =>
-              handleRoleChange(selectedOption, "source")
-            }
-          />
-          <Button
-            className="submit-button"
-            value="submit"
-            type="submit"
-            onClick={submitButton}
-          >
-            Start Webinar
-          </Button>
-        </Form.Group>
-      </Form>
-    </div>
+      <h4 className="Heading">Multilingual Webinar powered by KUDO AI</h4>
+      <div className="Formcontainer">
+        <Form className="signup-form">
+          <Form.Group className="formFields">
+            <Form.Control
+              className="name-input"
+              type="text"
+              placeholder="Name"
+              name="name"
+              onChange={handleChange}
+            ></Form.Control>
+            <Select
+              className="options"
+              placeholder="Select Role..."
+              options={options}
+              onChange={(selectedOption) =>
+                handleRoleChange(selectedOption, "role")
+              }
+              required
+            />
+            <Select
+              className="options"
+              placeholder="Select Source Language..."
+              options={sourcelanguageOptions}
+              onChange={(selectedOption) =>
+                handleRoleChange(selectedOption, "source")
+              }
+            />
+            <Form.Group controlId="kindOfStand">
+              <p>Choose the Voice Preferences</p>
+              <Form.Check
+                type="radio"
+                id="female"
+                label="Female"
+                value="female"
+                checked={selectedGender === "female"}
+                onChange={handleGenderChange}
+              />
+              <Form.Check
+                type="radio"
+                id="male"
+                label="Male"
+                value="male"
+                checked={selectedGender === "male"}
+                onChange={handleGenderChange}
+              />
+            </Form.Group>
+            <Button
+              className="submit-button"
+              value="submit"
+              type="submit"
+              onClick={submitButton}
+            >
+              Start Webinar
+            </Button>
+          </Form.Group>
+        </Form>
+      </div>
     </>
   );
 };
