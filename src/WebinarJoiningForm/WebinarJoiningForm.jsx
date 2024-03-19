@@ -77,10 +77,12 @@ export const WebinarJoiningForm = () => {
                 handleRoleChange(selectedOption, "source")
               }
             />
-            <Form.Group controlId="kindOfStand">
+            <Form.Group>
               <p>Choose the Voice Preferences</p>
               <Form.Check
+              className="GenderSelection"
                 type="radio"
+                inline
                 id="female"
                 label="Female"
                 value="female"
@@ -90,6 +92,7 @@ export const WebinarJoiningForm = () => {
               <Form.Check
                 type="radio"
                 id="male"
+                inline
                 label="Male"
                 value="male"
                 checked={selectedGender === "male"}
