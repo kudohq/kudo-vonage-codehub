@@ -1,0 +1,19 @@
+project:
+    name: kudo-vonage-multilingual-translation
+instance:
+    name: dev
+    runtime: nodejs16
+    region: aws.euw1
+    application-id: e0f54458-0960-4e61-acea-34f736466f6c
+    entrypoint:
+        - npx 
+        - serve
+        - "-s"
+    environment: 
+        - name: PORT
+          value: "8080"
+    build-script: ./build.sh
+
+
+debug:
+    application-id: e0f54458-0960-4e61-acea-34f736466f6c
