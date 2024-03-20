@@ -187,7 +187,7 @@ export const MeetingComponent = () => {
           />
         </div>
       <div className="actions-btns">
-        {isHost && isInterviewStarted && isSessionConnected ? (
+        {isInterviewStarted && isSessionConnected ? (
           <Button
             onClick={handleStartPublishing}
             color="primary"

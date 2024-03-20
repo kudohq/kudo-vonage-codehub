@@ -78,7 +78,7 @@ export const VideoComponent = () => {
 
   useEffect(() => {
     if (isHost) {
-      CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender)
+      CreateTranslationResource(predefinedTargetLanguge, state.source.value, state.gender)
         .then((id) => setResourceId(id))
         .catch((error) =>
           console.error("Error creating translation resource:", error)
