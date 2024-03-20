@@ -16,7 +16,6 @@ import {
 } from "./ExternalApiIntegration/VideoApiIntegration.js";
 import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection.jsx";
 import { useLocation } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector.js";
