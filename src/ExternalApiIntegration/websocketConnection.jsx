@@ -10,6 +10,7 @@ export const WebsocketConnection = ({
   resourceId,
   isInterviewStarted,
   userTargetLanguage,
+  isMeeting,
 }) => {
   const SERVER_URL = `wss://external-api-preprod.meetkudo.com/api/v1/translate?id=${resourceId}`;
   const API_TOKEN = AUTH_TOKEN;
@@ -71,7 +72,10 @@ export const WebsocketConnection = ({
     for (let i = 0; i < pcmData.length; i++) {
       pcmData[i] = dataView.getInt16(i * 4, true);
     }
-    sendMessage(JSON.stringify(pcmData));
+    const websocketdata = isMeeting ? JSON.stringify({audioData: pcmData, sourceLanguage: userTargetLanguage}) : JSON.stringify(pcmData)
+    
+    console.log("websocketdata", isMeeting, resourceId);
+    sendMessage(websocketdata);
   }, [dataBlobUrl, sendMessage]);
 
   // render convertBlobToArray function for every chunk of data

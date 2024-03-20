@@ -6,6 +6,7 @@ import {
 } from "./ExternalApiIntegration/VideoApiIntegration.js";
 import { LanguageSelector } from "./LanguageSelector/LanguageSelector.js";
 import { useLocation } from "react-router-dom";
+import { predefinedLanguages } from './constants/PredefinedLanguages'
 import { Button } from "@mui/material";
 import "./VideoChatComponent.scss";
 
@@ -65,7 +66,7 @@ export const JoiningVideoComponent = () => {
             <p className="mt-3">
               Hindi is the default language. Adjust language here:{" "}
             </p>
-            <LanguageSelector setSelectedLanguage={setSelectedLanguage} />
+            <LanguageSelector setSelectedLanguage={setSelectedLanguage} predefinedLanguages={predefinedLanguages} />
           </div>
         ) : (
           <Button

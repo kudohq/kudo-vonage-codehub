@@ -14,19 +14,20 @@ import {
   publish,
   reSubscribeStreams,
 } from "./ExternalApiIntegration/VideoApiIntegration.js";
-import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
+import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection.jsx";
 import { useLocation } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
-import { predefinedLanguages } from './constants/PredefinedLanguages.js'
+import { LanguageSelector } from "./LanguageSelector/LanguageSelector.js";
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
-export const VideoComponent = () => {
+export const MeetingComponent = () => {
   const location = useLocation();
+  const isMeeting = location.pathname === "/meeting";
   const state = location.state.form;
-  const predefinedTargetLanguge = predefinedLanguages.map((x) => x.value);
+  const UserSelectedLanguges = state.source;
+  const UserSelectedLangugesValues = UserSelectedLanguges.map((x) => x.value);
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -43,11 +44,8 @@ export const VideoComponent = () => {
   const [resourceId, setResourceId] = useState(null);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
-  const JoiningLink = opentokApiToken
-    ? `${window.location.origin}/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
-    : null;
 
-  const isHost = state.role.value === "Host";
+  const isHost = true;
   useEffect(() => {
     if (isInterviewStarted) {
       initializeSession(
@@ -78,25 +76,23 @@ export const VideoComponent = () => {
   }, [SelectedLanguage]);
 
   useEffect(() => {
-    if (isHost) {
-      CreateTranslationResource(predefinedTargetLanguge, state.source.value, state.gender)
-        .then((id) => setResourceId(id))
-        .catch((error) =>
-          console.error("Error creating translation resource:", error)
-        );
+    CreateTranslationResource(
+      null,
+      UserSelectedLangugesValues,
+      state.gender,
+      isMeeting
+    )
+      .then((id) => setResourceId(id))
+      .catch((error) =>
+        console.error("Error creating translation resource:", error)
+      );
 
-      createVonageApiTokens()
-        .then((tokens) => setOpentokApiToken(tokens))
-        .catch((error) =>
-          console.error("Error creating translation resource:", error)
-        );
-    }
+    createVonageApiTokens()
+      .then((tokens) => setOpentokApiToken(tokens))
+      .catch((error) =>
+        console.error("Error creating translation resource:", error)
+      );
   }, []);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(JoiningLink);
-    toast.success("Copied to Clipboard");
-  };
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -171,8 +167,17 @@ export const VideoComponent = () => {
         </div>
       </div>
       <h4 className="AppHeading">Multilingual Webinar powered by KUDO AI</h4>
+      <div className="joinLink">
+          <p className="mt-3">
+            Hindi is the default language. Adjust language here:{" "}
+          </p>
+          <LanguageSelector
+            setSelectedLanguage={setSelectedLanguage}
+            predefinedLanguages={UserSelectedLanguges}
+          />
+        </div>
       <div className="actions-btns">
-        {isHost && isInterviewStarted && isSessionConnected ? (
+        {isInterviewStarted && isSessionConnected ? (
           <Button
             onClick={handleStartPublishing}
             color="primary"
@@ -190,7 +195,7 @@ export const VideoComponent = () => {
               color="primary"
               variant="contained"
             >
-              Start Webinar
+              Start Meeting
             </Button>
             <Button
               onClick={() => onTogglePublisherDestroy(false)}
@@ -198,22 +203,11 @@ export const VideoComponent = () => {
               color="secondary"
               variant="contained"
             >
-              End Webinar
+              End Meeting
             </Button>
           </>
         ) : null}
       </div>
-      {opentokApiToken && isInterviewStarted && isSessionConnected ? (
-        <>
-          <div className="joinLink">
-            <p>Users can join the webinar using this link: </p>
-            <button className="copyButton" onClick={handleCopyLink}>
-              Copy Joining Link
-            </button>
-            <ToastContainer />
-          </div>
-        </>
-      ) : null}
       <div className="video-container">
         <div id="publisher" className="main-video">
           {isStreamSubscribed && renderToolbar()}
@@ -228,6 +222,7 @@ export const VideoComponent = () => {
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
           userTargetLanguage={SelectedLanguage.value}
+          isMeeting
         />
       ) : null}
     </div>
