@@ -45,12 +45,8 @@ export const MeetingComponent = () => {
   const [resourceId, setResourceId] = useState(null);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
-  const JoiningLink = opentokApiToken
-    ? `${window.location.origin}/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
-    : null;
 
-  const isHost = state.role === "Host";
-  console.log("eufgiuhrf", state, location);
+  const isHost = true;
   useEffect(() => {
     if (isInterviewStarted) {
       initializeSession(
@@ -98,11 +94,6 @@ export const MeetingComponent = () => {
         console.error("Error creating translation resource:", error)
       );
   }, []);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(JoiningLink);
-    toast.success("Copied to Clipboard");
-  };
 
   const onToggleAudio = (action) => {
     setIsAudioEnabled(action);
@@ -218,17 +209,6 @@ export const MeetingComponent = () => {
           </>
         ) : null}
       </div>
-      {opentokApiToken && isInterviewStarted && isSessionConnected ? (
-        <>
-          <div className="joinLink">
-            <p>Users can join the webinar using this link: </p>
-            <button className="copyButton" onClick={handleCopyLink}>
-              Copy Joining Link
-            </button>
-            <ToastContainer />
-          </div>
-        </>
-      ) : null}
       <div className="video-container">
         <div id="publisher" className="main-video">
           {isStreamSubscribed && renderToolbar()}
@@ -243,6 +223,7 @@ export const MeetingComponent = () => {
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
           userTargetLanguage={SelectedLanguage.value}
+          isMeeting
         />
       ) : null}
     </div>
