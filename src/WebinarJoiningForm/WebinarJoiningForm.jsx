@@ -6,18 +6,18 @@ import { useNavigate } from "react-router-dom";
 import "./WebinarJoiningForm.scss";
 import Select from "react-select";
 import { sourceLanguages } from "../constants/sourceLanguages.js";
-import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 
 export const WebinarJoiningForm = () => {
   const navigate = useNavigate();
   const [selectedGender, setSelectedGender] = useState("female");
+  const [selectEventType, setSelectEventType] = useState("meeting");
 
   const [form, setForm] = useState({
     name: "",
-    target: predefinedLanguages,
     source: "",
     role: "",
     gender: selectedGender,
+    type: selectEventType,
   });
   const options = [{ value: "Host", label: "Host" }];
 
@@ -28,11 +28,19 @@ export const WebinarJoiningForm = () => {
 
   const submitButton = (e) => {
     e.preventDefault();
-    navigate("/webinar", {
-      state: {
-        form: {...form, gender: selectedGender},
-      },
-    });
+    if (form.type === "meeting") {
+      navigate("/meeting", {
+        state: {
+          form: { ...form, gender: selectedGender, type: selectEventType },
+        },
+      });
+    } else {
+      navigate("/webinar", {
+        state: {
+          form: { ...form, gender: selectedGender, type: selectEventType },
+        },
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -44,7 +52,11 @@ export const WebinarJoiningForm = () => {
   };
 
   const handleGenderChange = (event) => {
-    setSelectedGender(event.target.value);
+    if (event.target.id === "female" || event.target.id === "male") {
+      setSelectedGender(event.target.value);
+    } else {
+      setSelectEventType(event.target.value);
+    }
   };
 
   return (
@@ -71,6 +83,7 @@ export const WebinarJoiningForm = () => {
             />
             <Select
               className="options"
+              isMulti
               placeholder="Select Source Language..."
               options={sourcelanguageOptions}
               onChange={(selectedOption) =>
@@ -78,34 +91,56 @@ export const WebinarJoiningForm = () => {
               }
             />
             <Form.Group>
-              <p>Voice Preference</p>
+              <p>Choose Event Type</p>
               <Form.Check
-              className="GenderSelection"
+                className="GenderSelection"
                 type="radio"
                 inline
-                id="female"
-                label="Female"
-                value="female"
-                checked={selectedGender === "female"}
+                label="Meeting"
+                value="meeting"
+                checked={selectEventType === "meeting"}
                 onChange={handleGenderChange}
               />
               <Form.Check
                 type="radio"
-                id="male"
                 inline
-                label="Male"
-                value="male"
-                checked={selectedGender === "male"}
+                label="Webinar"
+                value="webinar"
+                checked={selectEventType === "webinar"}
                 onChange={handleGenderChange}
               />
             </Form.Group>
+            {selectEventType === "webinar" ? (
+              <Form.Group>
+                <p>Voice Preference</p>
+                <Form.Check
+                  className="GenderSelection"
+                  type="radio"
+                  inline
+                  id="female"
+                  label="Female"
+                  value="female"
+                  checked={selectedGender === "female"}
+                  onChange={handleGenderChange}
+                />
+                <Form.Check
+                  type="radio"
+                  id="male"
+                  inline
+                  label="Male"
+                  value="male"
+                  checked={selectedGender === "male"}
+                  onChange={handleGenderChange}
+                />
+              </Form.Group>
+            ) : null}
             <Button
               className="submit-button"
               value="submit"
               type="submit"
               onClick={submitButton}
             >
-              Start Webinar
+              Click to Start
             </Button>
           </Form.Group>
         </Form>

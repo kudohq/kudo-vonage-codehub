@@ -14,7 +14,7 @@ import {
   publish,
   reSubscribeStreams,
 } from "./ExternalApiIntegration/VideoApiIntegration.js";
-import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection";
+import { WebsocketConnection } from "./ExternalApiIntegration/websocketConnection.jsx";
 import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
@@ -23,7 +23,7 @@ import { predefinedLanguages } from './constants/PredefinedLanguages.js'
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
-export const VideoComponent = () => {
+export const MeetingComponent = () => {
   const location = useLocation();
   const state = location.state.form;
   const predefinedTargetLanguge = predefinedLanguages.map((x) => x.value);
