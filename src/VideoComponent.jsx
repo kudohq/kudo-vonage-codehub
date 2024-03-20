@@ -19,14 +19,13 @@ import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
-import { predefinedLanguages } from './constants/PredefinedLanguages.js'
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
 export const VideoComponent = () => {
   const location = useLocation();
   const state = location.state.form;
-  const predefinedTargetLanguge = predefinedLanguages.map((x) => x.value);
+  const predefinedTargetLanguge = state.target.map((x) => x.value);
   const [isInterviewStarted, setIsInterviewStarted] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
@@ -48,7 +47,6 @@ export const VideoComponent = () => {
     : null;
 
   const isHost = state.role === "Host";
-  console.log("eufgiuhrf", state)
   useEffect(() => {
     if (isInterviewStarted) {
       initializeSession(
