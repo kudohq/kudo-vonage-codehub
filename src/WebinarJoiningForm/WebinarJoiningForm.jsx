@@ -82,27 +82,27 @@ export const WebinarJoiningForm = () => {
               required
             />
             <Form.Group>
-              <p>Voice Preference</p>
-              <Form.Check
-              className="GenderSelection"
-                type="radio"
-                inline
-                id="female"
-                label="Female"
-                value="female"
-                checked={selectedGender === "female"}
-                onChange={handleGenderChange}
-              />
-              <Form.Check
-                type="radio"
-                id="male"
-                inline
-                label="Male"
-                value="male"
-                checked={selectedGender === "male"}
-                onChange={handleGenderChange}
-              />
-            </Form.Group>
+                  <p>Event Type</p>
+                  <Form.Check
+                    className="GenderSelection"
+                    type="radio"
+                    inline
+                    id="meeting"
+                    label="Meeting"
+                    value="meeting"
+                    checked={selectEventType === "meeting"}
+                    onChange={handleGenderChange}
+                  />
+                  <Form.Check
+                    type="radio"
+                    id="webinar"
+                    inline
+                    label="Webinar"
+                    value="webinar"
+                    checked={selectEventType === "webinar"}
+                    onChange={handleGenderChange}
+                  />
+                </Form.Group>
             {selectEventType === "webinar" ? (
               <>
                 <Form.Group>
@@ -138,15 +138,16 @@ export const WebinarJoiningForm = () => {
               </>
             ) : (
               <Select
-              className="options"
-              isMulti
-              placeholder="Select Source Language..."
-              options={sourcelanguageOptions}
-              onChange={(selectedOption) =>
-                handleRoleChange(selectedOption, "source")
-              }
-            />
+                className="options"
+                isMulti
+                placeholder="Select Source Language..."
+                options={sourcelanguageOptions}
+                onChange={(selectedOption) =>
+                  handleRoleChange(selectedOption, "source")
+                }
+              />
             )}
+
             <Button
               className="submit-button"
               value="submit"
