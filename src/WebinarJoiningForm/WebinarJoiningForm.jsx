@@ -14,8 +14,7 @@ export const WebinarJoiningForm = () => {
 
   const [form, setForm] = useState({
     name: "",
-    target: predefinedLanguages,
-    source: "",
+    source: [],
     role: "",
     gender: selectedGender,
   });
@@ -40,7 +39,7 @@ export const WebinarJoiningForm = () => {
   };
 
   const handleRoleChange = (selectedOption, field) => {
-    setForm({ ...form, [field]: selectedOption.value });
+    setForm({ ...form, [field]: selectedOption });
   };
 
   const handleGenderChange = (event) => {
