@@ -73,10 +73,8 @@ export const WebsocketConnection = ({
       pcmData[i] = dataView.getInt16(i * 4, true);
     }
     const websocketdata = isMeeting ? JSON.stringify({audioData: pcmData, sourceLanguage: userTargetLanguage}) : JSON.stringify(pcmData)
-    
-    console.log("websocketdata", isMeeting, resourceId);
     sendMessage(websocketdata);
-  }, [dataBlobUrl, sendMessage]);
+  }, [dataBlobUrl, sendMessage, userTargetLanguage]);
 
   // render convertBlobToArray function for every chunk of data
   useEffect(() => {

@@ -35,8 +35,8 @@ export const MeetingComponent = () => {
   const [isSessionConnected, setIsSessionConnected] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({
-    value: "HIN",
-    label: "HINDI",
+    value: "ENG",
+    label: "ENGLISH",
   });
   const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
@@ -44,7 +44,11 @@ export const MeetingComponent = () => {
   const [resourceId, setResourceId] = useState(null);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
+  const JoiningLink = opentokApiToken
+  ? `${window.location.origin}/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
+  : null;
 
+  console.log(JoiningLink);
   const isHost = true;
   useEffect(() => {
     if (isInterviewStarted) {
