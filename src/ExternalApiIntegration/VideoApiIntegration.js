@@ -5,6 +5,8 @@ import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
 let apiKey = API_KEY;
 let session, subscriber, panner;
 let publisher = [];
+let captionsRemovalTimer;
+let selectedTargetLanguage;
 const predefinedTargetLanguge = predefinedLanguages.map(language => language.value);
 
 function handleError(error) {
@@ -24,6 +26,8 @@ export function initializeSession(
   setIsSessionConnected
 ) {
   let token = isHost ? opentokApiToken.publisher_token : opentokApiToken.subscriber_token;
+
+  selectedTargetLanguage = SelectedLanguage;
 
   if (session && session.isConnected()) {
     session.disconnect();
@@ -80,6 +84,14 @@ export function initializeSession(
       console.log("subscriber", event);
     }
   });
+
+  session.on('signal:caption', function(event) {
+    if(event.data.websocketTargetLanguage === selectedTargetLanguage){
+      addCaptionsForSubscriber(event.data.captionText);
+    }
+    console.log('Received caption:', event.data);
+  });
+
   // Do some action on destroying the stream
   session.on("sessionDisconnected", function (event) {
     console.log("event in destroyed", event);
@@ -112,10 +124,23 @@ export function toggleVideoSubscribtion(state) {
   subscriber.subscribeToVideo(state);
 }
 
-export function togglePublisherDestroy(state) {
+export function togglePublisherDestroy() {
   publisher.forEach(pub => {
     pub.disconnect();
   });
+}
+
+function sendCaption(session, captionText, userTargetLanguage, websocketTargetLanguage) {
+  session.signal({
+      type: 'caption',
+      data: {captionText,userTargetLanguage, websocketTargetLanguage},
+    }, function(error) {
+      if (error) {
+        console.error('Error sending signal:', error);
+      } else {
+        console.log('Caption signal sent');
+      }
+    });
 }
 
 export function reSubscribeStreams(streams, userTargetLanguage) {
@@ -123,6 +148,7 @@ export function reSubscribeStreams(streams, userTargetLanguage) {
     session.unsubscribe(subscriber);
   }
   console.log("Session unsubscribed");
+  selectedTargetLanguage = userTargetLanguage;
 
   for (let i = 0; i < streams.length; i++) {
     if(streams[i].name === userTargetLanguage){
@@ -140,6 +166,24 @@ export function reSubscribeStreams(streams, userTargetLanguage) {
     }
 
   }
+}
+
+export function addCaptionsForSubscriber(CaptionText){
+  const subscriberContainer = OT.subscribers.find().element;
+      const [subscriberWidget] = subscriberContainer.getElementsByClassName(
+        'OT_widget-container'
+      );
+      const captionBox = document.createElement('div');
+      captionBox.classList.add('caption-box');
+      captionBox.textContent = CaptionText;
+      subscriberWidget.appendChild(captionBox);
+
+      // remove the captions after 5 seconds
+      const removalTimerDuration = 5 * 1000;
+      clearTimeout(captionsRemovalTimer);
+      captionsRemovalTimer = setTimeout(() => {
+        captionBox.textContent = '';
+      }, removalTimerDuration);
 }
 
 function getAudioBuffer(buffer, audioContext) {
@@ -169,7 +213,7 @@ function createAudioStream(audioBuffer, audioContext) {
   };
 }
 
-export function publish(translatedBuffer, websocketTargetLanguage, userTargetLanguage) {
+export function publish(translatedBuffer, websocketTargetLanguage, userTargetLanguage, CaptionText) {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   // Create audio stream from mp3 file and video stream from webcam
   Promise.all([
@@ -219,9 +263,11 @@ export function publish(translatedBuffer, websocketTargetLanguage, userTargetLan
           console.log("Publishing the audio....");
           // If publisher1 is already initialized, update the audio source
           if (websocketTargetLanguage === predefinedTargetLanguge[i]) {
+            sendCaption(session, CaptionText, userTargetLanguage, websocketTargetLanguage);
             publisher[i].publishAudio(false); // Stop publishing audio temporarily
             publisher[i].setAudioSource(audioStream.getAudioTracks()[0]); // Set new audio source
             publisher[i].publishAudio(true); // Start publishing audio again
+            publisher[i].publishCaptions(true);
           }
         }
       }

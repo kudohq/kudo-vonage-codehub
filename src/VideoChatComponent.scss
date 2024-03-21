@@ -38,8 +38,17 @@
   display: flex;
   justify-content: center;
   height: 60vh;
-  // width: 70%;
   max-height: 800px;
+
+  .caption-box {
+    position: absolute;
+    top: 92%;
+    width: 100%;
+    text-align: center;
+    height: 40px;
+    z-index: 1;
+    background-color: #063c3c;
+  }
   .main-video {
     position: relative;
     width: 70% !important;

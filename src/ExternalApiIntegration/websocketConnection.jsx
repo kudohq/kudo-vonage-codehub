@@ -46,7 +46,7 @@ export const WebsocketConnection = ({
       reader.onload = function (event) {
         var audioData = event.target.result;
 
-        publish(audioData, data.targetLanguage, userTargetLanguage);
+        publish(audioData, data.targetLanguage, userTargetLanguage, data.text);
       };
       reader.readAsArrayBuffer(audioBlob);
       if (!isInterviewStarted) {
