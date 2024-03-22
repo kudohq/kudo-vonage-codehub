@@ -54,7 +54,7 @@ export function initializeSession(
           type: "audio",
           mimeType: "audio/wav",
           recorderType: StereoAudioRecorder,
-          timeSlice: 500,
+          timeSlice: 1000,
           ondataavailable: function (data) {
             setChunk(data);
           },
@@ -182,7 +182,8 @@ export function addCaptionsForSubscriber(CaptionText){
       const removalTimerDuration = 5 * 1000;
       clearTimeout(captionsRemovalTimer);
       captionsRemovalTimer = setTimeout(() => {
-        captionBox.textContent = '';
+        const oldCaptionBox = subscriberWidget.querySelector('.caption-box');
+        if (oldCaptionBox) oldCaptionBox.remove();
       }, removalTimerDuration);
 }
 
