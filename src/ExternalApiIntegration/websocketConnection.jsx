@@ -1,7 +1,6 @@
 // Ensure you have installed the following React packages: react-use-websocket and file-saver
 import useWebSocket from "react-use-websocket";
 import { useCallback, useEffect } from "react";
-import { AUTH_TOKEN } from "../config.js";
 
 import { publish } from "./VideoApiIntegration.js";
 
@@ -10,9 +9,9 @@ export const WebsocketConnection = ({
   resourceId,
   isInterviewStarted,
   userTargetLanguage,
+  apiToken
 }) => {
   const SERVER_URL = `wss://external-api-preprod.meetkudo.com/api/v1/translate?id=${resourceId}`;
-  const API_TOKEN = AUTH_TOKEN;
 
   // converting the data to valid binary format
   function convertDataURIToBinary(dataURI) {
@@ -58,7 +57,7 @@ export const WebsocketConnection = ({
     },
     onError: (e) => console.error("Error in websocket", e),
     shouldReconnect: () => false,
-    protocols: ["Authorization", API_TOKEN],
+    protocols: ["Authorization", apiToken],
   });
 
   // converting audio blob to float32array and send to websocket

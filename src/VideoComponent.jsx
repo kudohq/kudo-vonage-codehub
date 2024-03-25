@@ -19,6 +19,7 @@ import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
+import FetchApiToken  from "./ExternalApiIntegration/fetchApiToken.js";
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -32,6 +33,7 @@ export const VideoComponent = () => {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [isSessionConnected, setIsSessionConnected] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({
     value: "HIN",
     label: "HINDI",
@@ -78,11 +80,18 @@ export const VideoComponent = () => {
 
   useEffect(() => {
     if (isHost) {
-      CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender)
+      FetchApiToken()
+        .then((apiToken) => {
+          setAuthToken(apiToken);
+          CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender, apiToken)
         .then((id) => setResourceId(id))
         .catch((error) =>
           console.error("Error creating translation resource:", error)
         );
+        })
+        .catch((error) =>
+        console.error("Error creating auth token:", error)
+      );
 
       createVonageApiTokens()
         .then((tokens) => setOpentokApiToken(tokens))
@@ -227,6 +236,7 @@ export const VideoComponent = () => {
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
           userTargetLanguage={SelectedLanguage.value}
+          apiToken={authToken}
         />
       ) : null}
     </div>
