@@ -47,7 +47,7 @@ export const VideoComponent = () => {
     ? `${window.location.origin}/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
     : null;
 
-  const isHost = state.role === "Host";
+  const isHost = true;
   useEffect(() => {
     if (isInterviewStarted) {
       initializeSession(
