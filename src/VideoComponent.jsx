@@ -33,7 +33,6 @@ export const VideoComponent = () => {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [isSessionConnected, setIsSessionConnected] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
-  const [authToken, setAuthToken] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({
     value: "HIN",
     label: "HINDI",
@@ -80,14 +79,6 @@ export const VideoComponent = () => {
 
   useEffect(() => {
     if (isHost) {
-      FetchApiToken()
-        .then((apiToken) => {
-          setAuthToken(apiToken);
-        })
-        .catch((error) =>
-        console.error("Error creating auth token:", error)
-      );
-
       CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender)
         .then((id) => setResourceId(id))
         .catch((error) =>
