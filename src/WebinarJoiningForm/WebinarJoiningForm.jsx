@@ -54,13 +54,13 @@ export const WebinarJoiningForm = () => {
   return (
     <div className="h-screen p-16">
       <div className="h-full flex flex-row items-center justify-center bg-dark-200 rounded-3xl">
-        <div className="w-1/2 h-full flex items-center justify-center bg-black rounded-tl-3xl rounded-bl-3xl">
+        <div className="w-1/2 h-full flex items-center justify-center bg-black rounded-tl-3xl p-4 rounded-bl-3xl">
           <div className="flex items-center justify-center h-32 w-48">
             <img src={logo} alt="logo" />
           </div>
         </div>
-        <div className="w-1/2 h-full flex flex-col items-center justify-center rounded-tr-3xl rounded-br-3xl bg-[#F5F5F5]">
-          <div className="flex flex-col items-center justify-center gap-16">
+        <div className="w-1/2 h-full flex flex-col items-center justify-center rounded-tr-3xl rounded-br-3xl p-4 bg-[#F5F5F5]">
+          <div className="flex flex-col items-center my-auto justify-center gap-16">
             <h1 className="text-TextBlue text-center font-roboto font-bold text-3xl">
               Welcome!
             </h1>
@@ -124,7 +124,7 @@ export const WebinarJoiningForm = () => {
               </button>
             </div>
           </div>
-          <div className="mt-16">
+          <div className="relative">
             <span className="text-black text-center font-roboto text-sm font-normal">
               By clicking "Join" you agree to the KUDO
             </span>
