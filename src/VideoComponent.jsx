@@ -33,6 +33,7 @@ export const VideoComponent = () => {
   const [isStreamSubscribed, setIsStreamSubscribed] = useState(false);
   const [isSessionConnected, setIsSessionConnected] = useState(false);
   const [translatedBuffer, setTranslatedBuffer] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
   const [SelectedLanguage, setSelectedLanguage] = useState({
     value: "HIN",
     label: "HINDI",
@@ -81,6 +82,7 @@ export const VideoComponent = () => {
     if (isHost) {
       FetchApiToken()
         .then((apiToken) => {
+          setAuthToken(apiToken);
           CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender, apiToken)
         .then((id) => setResourceId(id))
         .catch((error) =>
@@ -234,6 +236,7 @@ export const VideoComponent = () => {
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
           userTargetLanguage={SelectedLanguage.value}
+          apiToken={authToken}
         />
       ) : null}
     </div>
