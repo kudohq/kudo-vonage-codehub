@@ -7,6 +7,7 @@ import "./WebinarJoiningForm.scss";
 import Select from "react-select";
 import { sourceLanguages } from "../constants/sourceLanguages.js";
 import { predefinedLanguages } from "../constants/PredefinedLanguages.js";
+import group from "../Group.png";
 
 export const WebinarJoiningForm = () => {
   const navigate = useNavigate();
@@ -19,7 +20,6 @@ export const WebinarJoiningForm = () => {
     role: "",
     gender: selectedGender,
   });
-  const options = [{ value: "Host", label: "Host" }];
 
   const sourcelanguageOptions = sourceLanguages.map((language) => ({
     value: language.code,
@@ -30,7 +30,7 @@ export const WebinarJoiningForm = () => {
     e.preventDefault();
     navigate("/webinar", {
       state: {
-        form: {...form, gender: selectedGender},
+        form: { ...form, gender: selectedGender },
       },
     });
   };
@@ -48,68 +48,66 @@ export const WebinarJoiningForm = () => {
   };
 
   return (
-    <>
-      <h4 className="Heading">Multilingual Webinar powered by KUDO AI</h4>
-      <div className="Formcontainer">
-        <Form className="signup-form">
-          <Form.Group className="formFields">
-            <Form.Control
-              className="name-input"
-              type="text"
-              placeholder="Name"
-              name="name"
-              onChange={handleChange}
-            ></Form.Control>
-            <Select
-              className="options"
-              placeholder="Select Role..."
-              options={options}
-              onChange={(selectedOption) =>
-                handleRoleChange(selectedOption, "role")
-              }
-              required
-            />
-            <Select
-              className="options"
-              placeholder="Select Source Language..."
-              options={sourcelanguageOptions}
-              onChange={(selectedOption) =>
-                handleRoleChange(selectedOption, "source")
-              }
-            />
+      <div className="h-[48.7rem] w-[90rem] flex flex-row items-center justify-center bg-dark-200 rounded-3xl">
+        <div className="w-1/2 h-full flex items-center justify-center bg-black rounded-tl-3xl rounded-bl-3xl">
+          <img src={group} className="h-32 w-48" alt="logo" />
+        </div>
+        <div className="w-1/2 h-full flex flex-col items-center justify-center rounded-tr-3xl rounded-br-3xl gap-16 bg-[#F5F5F5]">
+          <h1 className="text-TextBlue text-center font-roboto font-bold text-3xl">
+            Welcome!
+          </h1>
+          <Form>
             <Form.Group>
-              <p>Voice Preference</p>
-              <Form.Check
-              className="GenderSelection"
-                type="radio"
-                inline
-                id="female"
-                label="Female"
-                value="female"
-                checked={selectedGender === "female"}
-                onChange={handleGenderChange}
+              <Form.Control
+                className="w-80 rounded-lg border border-gray-500 bg-[#F5F5F5]"
+                type="text"
+                placeholder="Name"
+                name="name"
+                onChange={handleChange}
+              ></Form.Control>
+              <Select
+                className="w-80 rounded-lg border border-gray-500 bg-[#F5F5F5]"
+                placeholder="Select Source Language..."
+                options={sourcelanguageOptions}
+                onChange={(selectedOption) =>
+                  handleRoleChange(selectedOption, "source")
+                }
               />
-              <Form.Check
-                type="radio"
-                id="male"
-                inline
-                label="Male"
-                value="male"
-                checked={selectedGender === "male"}
-                onChange={handleGenderChange}
-              />
+              <Form.Group className="flex flex-col flex-col-2 justify-content items-center">
+                <p className="text-black mb-2">Select your Voice Preference</p>
+                <Form.Group>
+                  <Form.Check
+                    className="GenderSelection"
+                    type="radio"
+                    inline
+                    id="female"
+                    label="Female"
+                    value="female"
+                    checked={selectedGender === "female"}
+                    onChange={handleGenderChange}
+                  />
+                  <Form.Check
+                    type="radio"
+                    id="male"
+                    inline
+                    label="Male"
+                    value="male"
+                    checked={selectedGender === "male"}
+                    onChange={handleGenderChange}
+                  />
+                </Form.Group>
+              </Form.Group>
+              <Button
+                className="text-black rounded rounded-md border-none bg-[#F8C73E] hover:bg-[#F8C73E]"
+                value="submit"
+                type="submit"
+                onClick={submitButton}
+              >
+                Join webinar
+              </Button>
             </Form.Group>
-            <Button
-              className="submit-button"
-              value="submit"
-              type="submit"
-              onClick={submitButton}
-            >
-              Start Webinar
-            </Button>
-          </Form.Group>
-        </Form>
+          </Form>
+        </div>
       </div>
-    </>
   );
 };
