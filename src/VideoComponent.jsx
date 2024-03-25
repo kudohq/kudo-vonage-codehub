@@ -83,15 +83,16 @@ export const VideoComponent = () => {
       FetchApiToken()
         .then((apiToken) => {
           setAuthToken(apiToken);
-          CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender, apiToken)
-        .then((id) => setResourceId(id))
-        .catch((error) =>
-          console.error("Error creating translation resource:", error)
-        );
         })
         .catch((error) =>
         console.error("Error creating auth token:", error)
       );
+
+      CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender)
+        .then((id) => setResourceId(id))
+        .catch((error) =>
+          console.error("Error creating translation resource:", error)
+        );
 
       createVonageApiTokens()
         .then((tokens) => setOpentokApiToken(tokens))
@@ -236,7 +237,6 @@ export const VideoComponent = () => {
           isInterviewStarted={isInterviewStarted}
           resourceId={resourceId}
           userTargetLanguage={SelectedLanguage.value}
-          apiToken={authToken}
         />
       ) : null}
     </div>

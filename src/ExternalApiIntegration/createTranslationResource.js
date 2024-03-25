@@ -1,6 +1,7 @@
 import { baseService } from "./baseService.js";
+import { AUTH_TOKEN } from "../config.js";
 
-const createTranslationResource = async (targetLanguage, sourceLanguage, gender, authToken) => {
+const createTranslationResource = async (targetLanguage, sourceLanguage, gender) => {
   const requestData = {
     clientId: "kudo-preprod-payments-auth-client",
     sourceLanguages: [`${sourceLanguage}`],
@@ -15,7 +16,7 @@ const createTranslationResource = async (targetLanguage, sourceLanguage, gender,
       {
         headers: {
           "Content-Type": "application/json",
-          "x-api-token": authToken,
+          "x-api-token": AUTH_TOKEN,
         },
       }
     );
