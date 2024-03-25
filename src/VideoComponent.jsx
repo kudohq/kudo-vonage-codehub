@@ -40,7 +40,6 @@ export const VideoComponent = () => {
   const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
   const [opentokApiToken, setOpentokApiToken] = useState(null);
-  const [authToken, setAuthToken] = useState(null);
   const [resourceId, setResourceId] = useState(null);
   const languageRef = useRef(false);
   const recorderRef = useRef(null);
@@ -81,17 +80,16 @@ export const VideoComponent = () => {
   useEffect(() => {
     if (isHost) {
       FetchApiToken()
-        .then((apiToken) => (setAuthToken(apiToken)))
-        .catch((error) =>
-        console.error("Error creating auth token:", error)
-      );
-      if(authToken){
-        CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender, authToken)
+        .then((apiToken) => {
+          CreateTranslationResource(predefinedTargetLanguge, state.source, state.gender, apiToken)
         .then((id) => setResourceId(id))
         .catch((error) =>
           console.error("Error creating translation resource:", error)
         );
-      }
+        })
+        .catch((error) =>
+        console.error("Error creating auth token:", error)
+      );
 
       createVonageApiTokens()
         .then((tokens) => setOpentokApiToken(tokens))
