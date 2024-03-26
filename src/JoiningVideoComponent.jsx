@@ -16,8 +16,8 @@ export const JoiningVideoComponent = () => {
   const subToken = searchParams.get("SubToken");
   const [isWebinarStarted, setIsWebinarStarted] = useState(false);
   const [SelectedLanguage, setSelectedLanguage] = useState({
-    value: "HIN",
-    label: "HINDI",
+    value: "ENG",
+    label: "ENGLISH",
   });
   const [streams, setStreams] = useState([]);
   const [chunk, setChunk] = useState(null);
@@ -63,7 +63,7 @@ export const JoiningVideoComponent = () => {
         {isWebinarStarted ? (
           <div className="joinLink">
             <p className="mt-3">
-              Hindi is the default language. Adjust language here:{" "}
+              English is the default language. Adjust language here:{" "}
             </p>
             <LanguageSelector setSelectedLanguage={setSelectedLanguage} />
           </div>
