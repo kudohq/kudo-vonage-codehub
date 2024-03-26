@@ -19,6 +19,7 @@ import { useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import createVonageApiTokens from "./ExternalApiIntegration/createVonageApiTokens.js";
 import CreateTranslationResource from "./ExternalApiIntegration/createTranslationResource.js";
+import FetchApiToken  from "./ExternalApiIntegration/fetchApiToken.js";
 import "./VideoChatComponent.scss";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,7 +47,7 @@ export const VideoComponent = () => {
     ? `${window.location.origin}/webinar/guest/?sessionId=${opentokApiToken.session_id}&SubToken=${opentokApiToken.subscriber_token}`
     : null;
 
-  const isHost = state.role === "Host";
+  const isHost = true;
   useEffect(() => {
     if (isInterviewStarted) {
       initializeSession(
